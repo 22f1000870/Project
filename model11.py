@@ -7,8 +7,8 @@ class roles(db.Model):
     user_id=db.Column(db.Integer,autoincrement=True,unique=True)
     username=db.Column(db.String,primary_key=True)
     password=db.Column(db.String,nullable=False)
-    sponsor=db.relationship('Sponsor',uselist=False)
-    influencer=db.relationship('Influencer',uselist=False)
+    type=db.Column(db.String,nullable=False)
+    
 
 class Sponsor(db.Model):
     __tablename__='sponsor'
@@ -18,7 +18,8 @@ class Sponsor(db.Model):
     industry=db.Column(db.String,nullable=False)
     image=db.Column(db.LargeBinary,nullable=False)
     budget=db.Column(db.Double,nullable=False)
-    #campaigns=db.relationship('Campaign',backref=db.backref('sponsors',lazy='joined'),lazy='dynamic')
+    role=db.relationship('Role',uselist=False,backref=db.backref('sponsor',uselist=False,lazy='dynamic'),lazy='dynamic')
+    campaign=db.relationship('Campaign',backref=db.backref('sponsor',lazy='dynamic'),lazy='dynamic')
 
 class Campaign(db.Model):
     __tablename__='campaign'
@@ -27,7 +28,7 @@ class Campaign(db.Model):
     requirement=db.Column(db.String)
     visibility=db.Column(db.Integer,nullable=False)
     amount=db.Column(db.Double,nullable=False)
-    time=db.relationship('Time',uselist=False)
+    time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False,lazy='dynamic'),lazy='dynamic')
     
     
 class Influencer(db.Model):
@@ -38,6 +39,9 @@ class Influencer(db.Model):
     image=db.Column(db.LargeBinary,nullable=False)
     niche=db.Column(db.String,nullable=False)
     reach=db.Column(db.Integer,nullable=False)
+    role=db.relationship('Role',uselist=False,backref=db.backref('influencer',uselist=False,lazy='dynamic'),lazy='dynamic')
+
+
 
 class Time(db.Model):
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
@@ -48,5 +52,4 @@ class Time(db.Model):
 class CI(db.Model):
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
-
-    campaign=db.relationship('Camipaign',backref='CI',lazy='dynamic')
+    
