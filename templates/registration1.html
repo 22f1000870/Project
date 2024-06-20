@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+    
+    
+    <head>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <meta charset="UTF-16">
+        <meta name="viewport" content="width=divce-width, initial-scale=1"> 
+        <title> Registration </title>
+        <style>
+            .border-3{
+                border-color: black;
+            }
+            .dd{
+                background: radial-gradient(circle,#7e89e2, #0b0577) 
+                
+            }
+            .jhk{
+               
+                margin-bottom: 500px;
+                margin: left 100px;
+            }
+            .container-md {
+                background: fixed snow;
+                
+                
+                margin-top: 150px;
+                height: 300px;
+                width: 750px
+                
+            }
+            .bg-aak {
+                background-color: #0b0577;
+            }
+            
+            
+        </style>   
+            
+
+    </head>
+    <body class="dd">
+
+    <div class="container-md  border border-4">
+
+        <div class="row jhk >
+            <form action="/" method="post">
+                <div class="mb-5 mt-5">
+                    <form action="/" class="form-detail" method="post">
+                        <div class="form-row">
+                            <label for="fname" class="form-label ms-5 badge bg-dark">First Name</label>
+                            <input type="text" class="input-text ms-1" id="fname" name="fname">
+                            <label for="lname" class="form-label ms-5 badge bg-dark">Last Name</label>
+                            <input type="text" class="input-text" id="lname" name="lname">
+                        </div>
+                        <div class="form-row">
+                            <label for="username" class="form-label ms-5 badge bg-dark">Username</label>
+                            <input type="text" class="input-text mt-3 ms-2" id="username" name="username">
+                            <label for="pwd" class="form-label badge bg-dark ms-5">Password:</label>
+                          <input type="password" class="input-text" id="pwd" placeholder="Enter password" name="pswd">
+                        </div>
+                        
+                        <div class="form-row mt-3 ms-5">  
+                            <h2 class="badge bg-dark">Platform Preference</h2><br>
+                        <div class="form-check form-check-inline mt-3">
+                            <input
+                                class="form-check-input border-3"
+                                type="checkbox"
+                                id="1"
+                                value="Instagram"
+                            />
+                            <i class="bi bi-instagram fs-2" style="color: #ac2bac;"></i>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input
+                                class="form-check-input border-3"
+                                type="checkbox"
+                                id="2"
+                                value="Facebook"
+                            />
+                            <i class="bi bi-facebook fs-2" style="color: #3b5998;"></i>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input
+                                class="form-check-input border-3"
+                                type="checkbox"
+                                id="3"
+                                value="youtube"/>
+                                <i class="bi bi-youtube fs-2" style="color: #ed302f;"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg text-light ms-5 ">Submit</button>
+                        </div><br>
+                        
+                        
+                    </form>
+    
+                </div>
+            </form>
+        </div>
+    </div>
+        
+
+    </body>
+</html>
