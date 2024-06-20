@@ -14,7 +14,6 @@ class Sponsor(db.Model):
     __tablename__='sponsor'
     sponsor_id=db.Column(db.Integer,db.ForiegnKey('roles.user_id'))
     company_name=db.Column(db.String,nullable=False,unique=True)
-    category=db.Column(db.String,nullable=False)
     industry=db.Column(db.String,nullable=False)
     image=db.Column(db.LargeBinary,nullable=False)
     budget=db.Column(db.Double,nullable=False)
