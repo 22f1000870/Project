@@ -37,7 +37,6 @@ class Influencer(db.Model):
     fname=db.Column(db.String,nullable=False)
     lname=db.Column(db.String)
     image=db.Column(db.LargeBinary,nullable=False)
-    niche=db.Column(db.String,nullable=False)
     reach=db.Column(db.Integer,nullable=False)
     role=db.relationship('Role',uselist=False,backref=db.backref('influencer',uselist=False,lazy='dynamic'),lazy='dynamic')
 

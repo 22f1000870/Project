@@ -28,7 +28,7 @@
                 
                 
                 margin-top: 150px;
-                height: 300px;
+                height: 360px;
                 width: 750px
                 
             }
@@ -64,33 +64,44 @@
                         
                         <div class="form-row mt-3 ms-5">  
                             <h2 class="badge bg-dark">Platform Preference</h2><br>
-                        <div class="form-check form-check-inline mt-3">
+                        <div class="form-row ">
+                            <i class="bi bi-instagram fs-2" style="color: #ac2bac;"></i>
                             <input
-                                class="form-check-input border-3"
-                                type="checkbox"
+                                class="form-control-sm border-1"
+                                type="number"
                                 id="1"
                                 value="Instagram"
-                            />
-                            <i class="bi bi-instagram fs-2" style="color: #ac2bac;"></i>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input border-3"
-                                type="checkbox"
-                                id="2"
-                                value="Facebook"
+                                placeholder="Enter Followers"
                             />
                             <i class="bi bi-facebook fs-2" style="color: #3b5998;"></i>
-                        </div>
-                        <div class="form-check form-check-inline">
                             <input
-                                class="form-check-input border-3"
-                                type="checkbox"
+                                class="form-control-sm"
+                                type="number"
+                                id="2"
+                                value="Facebook"
+                                placeholder="Enter Followers"
+                            />
+                            <i class="bi bi-youtube fs-2" style="color: #ed302f;"></i>
+                            <input
+                                class="form-control-sm border-1"
+                                type="number"
                                 id="3"
-                                value="youtube"/>
-                                <i class="bi bi-youtube fs-2" style="color: #ed302f;"></i>
+                                value="youtube"
+                                placeholder="Enter Subscriber"/>
+                                
+                            
+                        </div><br>
+                        <div class="form-row">
+                            <label class="badge bg-dark" for="image">Upload Image</label>
+                            <input
+                                class="form-control-sm"
+                                type="file"
+                                name="image"
+                                id="image"/>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg text-light ms-5 ">Submit</button>
+                        
+                        <div class="mt-3 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-lg text-light ">Submit</button>
                         </div><br>
                         
                         
