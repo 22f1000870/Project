@@ -29,6 +29,7 @@ class Campaign(db.Model):
     amount=db.Column(db.Double,nullable=False)
     time=db.relationship('Time',uselist=False)
     
+    
 class Influencer(db.Model):
     __tablename__='influencer'
     influencer_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'))
@@ -49,12 +50,3 @@ class CI(db.Model):
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
 
     campaign=db.relationship('Camipaign',backref='CI',lazy='dynamic')
-    
-
-
-'''class Request:
-    __tablename__='request'
-    request_id=db.Column(db.String,primary_key=True)
-    campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
-    status=db.Column(db.Integer,db.ForeignKey('campaign.status'))
-    niche=db.Column(db.Integer,db.ForeignKey('campaign.niche'))'''
