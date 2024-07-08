@@ -38,7 +38,16 @@
         <div class="container mt-5 border border-light border-4 rounded-top rounded-bottom shadow bg-blue">
             <div class="row mt-2 jhk">
                     <div class="col-5 ">
-                    <form action="/login">
+                        {% with messages=get_flashed_messages() %}
+                            {% if messages %}
+                            <ul class="flashes">
+                            {% for message in messages %}
+                                <li>{{message}}</li>
+                            {% endfor %}
+                            </ul>
+                            {% endif %}
+                        {% endwith %}
+                    <form action="/login" method="post">
                         <h1 style="text-align: center;">Login</h1>
                         <div>
                           <label for="username" class="form-label badge bg-dark">Username:</label>

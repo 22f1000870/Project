@@ -67,11 +67,11 @@ def registration(usertype):
                 flash("Fill-up the empty fields",'warning')
                 return redirect(url_for('registration',usertype=usertype))
 
-@app.route('/login',methods=['GET','POST'])
+@app.route('/login',methods=['POST'])
 def login():
-    a=request.form
-    u=db.session.query(Roles).filter(Roles.username==a['username'],Roles.password==a['pswd'])
-    print(u)
+    
+    u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
+    
     if u:
         if u.type=='influencer':
             return render_template('idashboard.html')
@@ -81,8 +81,8 @@ def login():
             return render_template('adashboard.html')
         
     else:
-        flash('Incorrect Username or Password')
-        return redirect(url_for(home))
+        flash('Incorrect Credentials')
+        return redirect(url_for('home'))
 
 
 

@@ -45,6 +45,15 @@
         <div class="row jhk >
             
                 <div class="mt-3">
+                    {% with messages = get_flashed_messages(with_categories=true)}
+                    {% if messages %}
+                    <ul>
+                    {% for category,message in messages %}
+                        <li class="{{category}}">{{ message}}</li>
+                    {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
                     <form action="/registration/sponsor" enctype="multipart/form-data" class="form-detail" method="post">
                         <div class="form-row">
                             <label for="cname" class="form-label ms-5 badge bg-dark">Company Name</label>
