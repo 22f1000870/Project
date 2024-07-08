@@ -67,22 +67,36 @@ def registration(usertype):
                 flash("Fill-up the empty fields",'warning')
                 return redirect(url_for('registration',usertype=usertype))
 
-@app.route('/login',methods=['POST'])
+@app.route('/login',methods=['GET','POST'])
 def login():
     
-    u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
-    
-    if u:
-        if u.type=='influencer':
-            return render_template('idashboard.html')
-        elif u.type=='sponsor':
-            return render_template('sdashboard.html')
-        elif u.type=='admin':
-            return render_template('adashboard.html')
+    if request.method=='POST':
+        u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
         
-    else:
-        flash('Incorrect Credentials')
-        return redirect(url_for('home'))
+        if u:
+            if u.type=='influencer':
+                return redirect('/dashboard/influencer/profile')
+            elif u.type=='sponsor':
+                return redirect('/dashboard/sponsor/profile')
+            elif u.type=='admin':
+                return redirect('/dashboard/admin/profile')
+            
+        else:
+            flash('Incorrect Credentials')
+            return redirect(url_for('home'))
+
+
+@app.route('/dashboard/<usertype>/<page>',methods=['GET','POST'])
+def dashboard(usertype,page):
+    if request.method=='GET':
+        if usertype=='sponsor':
+            if page=='profile':
+                return render_template('sdashboard.html')
+            elif page=='campaign':
+                
+
+
+
 
 
 
