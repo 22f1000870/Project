@@ -18,7 +18,7 @@ class Sponsor(db.Model):
     sponsor_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     company_name=db.Column(db.String,nullable=False,unique=True)
     industry=db.Column(db.String,nullable=False)
-    image=db.Column(db.LargeBinary,nullable=False)
+    image=db.Column(db.LargeBinary)
     budget=db.Column(db.Double,nullable=False)
     
     campaign=db.relationship('Campaign',backref=db.backref('sponsor'))
@@ -40,8 +40,8 @@ class Influencer(db.Model):
     influencer_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     fname=db.Column(db.String,nullable=False)
     lname=db.Column(db.String)
-    image=db.Column(db.LargeBinary,nullable=False)
-    reach=db.Column(db.Integer,nullable=False)
+    image=db.Column(db.LargeBinary)
+    reach=db.Column(db.Integer)
     
 
 
