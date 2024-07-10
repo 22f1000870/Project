@@ -1,17 +1,25 @@
 
-from flask import Flask,render_template,request, url_for,redirect,flash
+from flask import Flask,render_template, url_for,redirect,flash,session,request
 from model11 import*
-import os
-import jinja2
 
 app=Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///project_database.sqlite3"
+
 app.config['SECRET_KEY']='mirzajunaid'
+
 db.init_app(app)
 
+login.init_app(app)
+
 app.app_context().push()
+
 db.create_all()
+
+
+@login.user_loader
+def loader(user_id):
+    return db.session.get(Roles,int(user_id))
 
 @app.route("/",methods=["GET"])
 def home():
@@ -66,42 +74,42 @@ def registration(usertype):
             else:
                 flash("Fill-up the empty fields",'warning')
                 return redirect(url_for('registration',usertype=usertype))
+            
 
 @app.route('/login',methods=['GET','POST'])
-def login():
-    
+def log():
     if request.method=='POST':
+       
         u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
-        
         if u:
-            if u.type=='influencer':
-                return redirect('/dashboard/influencer/profile')
-            elif u.type=='sponsor':
-                return redirect('/dashboard/sponsor/profile')
-            elif u.type=='admin':
-                return redirect('/dashboard/admin/profile')
-            
-        else:
-            flash('Incorrect Credentials')
-            return redirect(url_for('home'))
+            login_user(u)
+            return redirect(url_for('campaign'))
 
 
-@app.route('/dashboard/<usertype>/<page>',methods=['GET','POST'])
-def dashboard(usertype,page):
+
+@app.route('/campaign')
+@login_required
+def campaign():
+   c=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
+   return render_template('campaign.html',user=current_user.sponsor,campaign=c)#user=current_user.sponsor,campaign=c)
+
+@app.route('/campaign/add',methods=['GET','POST'])
+@login_required
+def addcampaign():
     if request.method=='GET':
-        if usertype=='sponsor':
-            if page=='profile':
-                return render_template('sdashboard.html')
-            elif page=='campaign':
-                
+        return render_template('addcampaign.html',user=current_user.sponsor)
+    else:
+        pass
 
-
-
-
-
-
-if __name__=="__main__":
+if __name__=='__main__':
     app.run(debug=True)
+
+
+
+
+
+
+
 
 
 

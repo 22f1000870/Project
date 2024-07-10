@@ -1,45 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Option 1: Include in HTML -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sponsor</title>
+    <title>Sponsor Dashboard</title>
+    <style>
+        .aa{
+            background: radial-gradient(circle,white, #7e89e2);
+               
+            height: 100vh;
+        }
+        .aj{
+            margin-top: 60px;
+            background:radial-gradient(ellipse,white,#7e89e2);
+        }
+        .jk{
+            background:radial-gradient(ellipse,white,white);
+        }
+    </style>
 </head>
-<body>
-    <div class="container-fluid bg-dark" style="height: 50px;">
-        <nav class="navbar navbar-expand-xxl navbar-dark bg-dark" style="height: 50px;">
+<body class="aa">
+    <div
+        class="container-fluid jk"
+    >
+       <div class="row">
+       <div class="col-12">
+        <nav class="navbar navbar-expand-lg  fixed-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">
-                    <img src="../static/IMG-20210422-WA0000.jpg" alt="" width="30" height="24" class="d-inline-block align-text-top">
-                    Sponsor : {{cname}}</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse " id="navbarNav">
-                    <ul class="navbar-nav ">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Campaign</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Statistics</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Find</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Logout</a>
-                        </li>
-                    </ul>
-                </div>
+              <a class="navbar-brand" href="#">
+                <img src="../static/IMG-20210422-WA0000.jpg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                    Sponsor : {{user.company_name}}</a>
+              </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link"  href="#">Profile</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Statistics</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Find</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link " href="#">Logout</a>
+                  </li>
+                </ul>
+              </div>
             </div>
-        </nav>
-    </div>
+          </nav>
 
+        </div>
+        </div>
+    </div>
+    <div class="container-fluid h-75 aj bg-dark">
+        <div class="row align-items-center">
+            
+            <div class="col">
+                <a href="#">
+                <figure class="figure">
+                    <img src="..." class="figure-img img-fluid rounded" alt="...">
+                    <figcaption class="figure-caption">A caption for the above image.</figcaption>
+                  </figure>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+    <a href="/campaign/add" style="display: flex;justify-content: center; margin-top: 10px;">
+
+        <i class="bi bi-plus-circle-dotted fs-1"></i>
+        
+    </a>   
+    </div>
+    
+          
+          
     
     
+    
+    
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
