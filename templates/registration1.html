@@ -28,7 +28,7 @@
                 
                 
                 margin-top: 150px;
-                height: 300px;
+                height: 400px;
                 width: 750px
                 
             }
@@ -45,56 +45,87 @@
 
     <div class="container-md  border border-4">
 
-        <div class="row jhk >
-            <form action="/" method="post">
+        <div class="row jhk" >
+            <form action="/registration/influencer" enctype="multipart/form-data"  method="post">
                 <div class="mb-5 mt-5">
+                   {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <ul>
+                            {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
                     <form action="/" class="form-detail" method="post">
                         <div class="form-row">
                             <label for="fname" class="form-label ms-5 badge bg-dark">First Name</label>
-                            <input type="text" class="input-text ms-1" id="fname" name="fname">
+                            <input type="text" class="input-text ms-1" id="fname" name="fname" required>
                             <label for="lname" class="form-label ms-5 badge bg-dark">Last Name</label>
                             <input type="text" class="input-text" id="lname" name="lname">
                         </div>
                         <div class="form-row">
                             <label for="username" class="form-label ms-5 badge bg-dark">Username</label>
-                            <input type="text" class="input-text mt-3 ms-2" id="username" name="username">
+                            <input type="text" class="input-text mt-3 ms-2" id="username" name="username" required>
                             <label for="pwd" class="form-label badge bg-dark ms-5">Password:</label>
-                          <input type="password" class="input-text" id="pwd" placeholder="Enter password" name="pswd">
+                          <input type="password" class="input-text" id="pwd" placeholder="Enter password" name="pswd" required>
                         </div>
                         
                         <div class="form-row mt-3 ms-5">  
                             <h2 class="badge bg-dark">Platform Preference</h2><br>
-                        <div class="form-check form-check-inline mt-3">
-                            <input
-                                class="form-check-input border-3"
-                                type="checkbox"
-                                id="1"
-                                value="Instagram"
-                            />
+                        <div class="form-row ">
                             <i class="bi bi-instagram fs-2" style="color: #ac2bac;"></i>
-                        </div>
-                        <div class="form-check form-check-inline">
                             <input
-                                class="form-check-input border-3"
-                                type="checkbox"
-                                id="2"
-                                value="Facebook"
-                            />
+                                class="form-control-sm border-1"
+                                type="number"
+                                id="1"
+                                name="instagram"
+                                placeholder="Enter Followers"
+                            required>
                             <i class="bi bi-facebook fs-2" style="color: #3b5998;"></i>
-                        </div>
-                        <div class="form-check form-check-inline">
                             <input
-                                class="form-check-input border-3"
-                                type="checkbox"
+                                class="form-control-sm"
+                                type="number"
+                                id="2"
+                                name="facebook"
+                                placeholder="Enter Followers"
+                            required>
+                            <i class="bi bi-youtube fs-2" style="color: #ed302f;"></i>
+                            <input
+                                class="form-control-sm border-1"
+                                type="number"
                                 id="3"
-                                value="youtube"/>
-                                <i class="bi bi-youtube fs-2" style="color: #ed302f;"></i>
+                                name="youtube"
+                                placeholder="Enter Subscriber"required>
+                                
+                            
+                        </div><br>
+                        <div class="form-row">
+                            <label class="badge bg-dark" for="image">Upload Image</label>
+                            <input
+                                class="form-control-sm"
+                                type="file"
+                                name="image"
+                                id="image"required>
+                                <label class="badge bg-dark" for="niche">Niche</label>
+                                <select class="form-select-sm ms-1" id="niche" name="niche" required>
+                                    <option class="text-light bg-dark" value="Gaming">Gaming</option>
+                                    <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
+                                    <option class="text-light bg-dark" value="Politics">Politics</option>
+                                    <option class="text-light bg-dark" value="Tourism">Tourism</option>
+                                </select>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-lg text-light ms-5 ">Submit</button>
+                        <div class="form-row">
+                            
+                        </div>
+                        
+                        <div class="mt-3 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-lg text-light ">Submit</button>
                         </div><br>
                         
                         
                     </form>
+                    
     
                 </div>
             </form>
