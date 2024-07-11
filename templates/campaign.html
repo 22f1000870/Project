@@ -64,16 +64,24 @@
     </div>
     <div class="container-fluid h-75 aj bg-dark">
         <div class="row align-items-center">
+          {% if campaign %}
+          {% for i in campaign %}
             
             <div class="col">
-                <a href="#">
+              
+                <a href="/details/{{i.campaign_id}}">
                 <figure class="figure">
-                    <img src="..." class="figure-img img-fluid rounded" alt="...">
-                    <figcaption class="figure-caption">A caption for the above image.</figcaption>
+                  
+                    <img src="{{i.image}}" class="figure-img img-fluid rounded" alt="i.title ">
+                  
+                    <figcaption class="figure-caption">{{i.title}}</figcaption>
                   </figure>
                 </a>
+
             </div>
-            
+          
+          {% endfor %}
+          {% endif %}
         </div>
     </div>
     <a href="/campaign/add" style="display: flex;justify-content: center; margin-top: 10px;">

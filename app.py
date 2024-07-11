@@ -1,6 +1,8 @@
 
+import base64
 from flask import Flask,render_template, url_for,redirect,flash,session,request
 from model11 import*
+from datetime import datetime
 
 app=Flask(__name__)
 
@@ -98,8 +100,32 @@ def campaign():
 def addcampaign():
     if request.method=='GET':
         return render_template('addcampaign.html',user=current_user.sponsor)
-    else:
-        pass
+    elif request.method=='POST':
+        a=request.form
+        if a['title'] and a['requirement'] and a['start'] and a['end'] and a['niche'] and a['amount'] :
+            start= datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
+            end= datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
+            f=(request.files['image']).read()
+            c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f)
+            db.session.add(c)
+            db.session.flush()
+            t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0,visibility=int(a['visibility']))
+            r=Request(campaign_id=c.campaign_id,amount=float(a['amount']))
+            db.session.add_all([t,r])
+            db.session.commit()
+            ca=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
+            z=[]
+            for i in ca:
+                image = i.image.decode("utf-8")
+                campaign_data = {
+                    'campaign_id': campaign.campaign_id,
+                    'image': f"data:image/jpeg;base64,{image}",
+                    'title': campaign.title,
+                    'niche': campaign.niche,
+                    'requirement': campaign.requirement
+                }
+                z.append(campaign_data)
+            return render_template('campaign.html',user=current_user.sponsor,campaign=z)
 
 if __name__=='__main__':
     app.run(debug=True)
