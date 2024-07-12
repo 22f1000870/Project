@@ -31,7 +31,7 @@
         <nav class="navbar navbar-expand-lg  fixed-top">
             <div class="container-fluid">
               <a class="navbar-brand" href="#">
-                <img src="../static/IMG-20210422-WA0000.jpg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                <img src="{{url_for('static',filename=user.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
                     Sponsor : {{user.company_name}}</a>
               </a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
                 <a href="/details/{{i.campaign_id}}">
                 <figure class="figure">
                   
-                    <img src="{{i.image}}" class="figure-img img-fluid rounded" alt="i.title ">
+                    <img src="{{ url_for('static',filename=i.image)}}" class="figure-img  rounded" alt="i.title " width="200px" height="200px">
                   
                     <figcaption class="figure-caption">{{i.title}}</figcaption>
                   </figure>

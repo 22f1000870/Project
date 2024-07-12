@@ -24,7 +24,7 @@ class Sponsor(db.Model,UserMixin):
     sponsor_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     company_name=db.Column(db.String,nullable=False,unique=True)
     industry=db.Column(db.String,nullable=False)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     budget=db.Column(db.Double,nullable=False)
     
     campaign=db.relationship('Campaign',backref=db.backref('sponsor'))
@@ -35,7 +35,7 @@ class Campaign(db.Model,UserMixin):
     sponsor_id=db.Column(db.Integer,db.ForeignKey('sponsor.sponsor_id'))
     campaign_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
     title=db.Column(db.String,nullable=False)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     niche=db.Column(db.String,nullable=False)
     requirement=db.Column(db.String)
     amount=db.Column(db.Double)
@@ -48,7 +48,7 @@ class Influencer(db.Model,UserMixin):
     influencer_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     fname=db.Column(db.String,nullable=False)
     lname=db.Column(db.String)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     reach=db.Column(db.Integer)
     niche=db.Column(db.String,nullable=False)
 

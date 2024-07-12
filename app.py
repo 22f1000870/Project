@@ -1,5 +1,6 @@
 
 import base64
+import os
 from flask import Flask,render_template, url_for,redirect,flash,session,request
 from model11 import*
 from datetime import datetime
@@ -10,6 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///project_database.sqlite3"
 
 app.config['SECRET_KEY']='mirzajunaid'
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['UPLOAD_FOLDER']=os.path.join(basedir,'static')
+
 db.init_app(app)
 
 login.init_app(app)
@@ -18,6 +22,12 @@ app.app_context().push()
 
 db.create_all()
 
+def checkext(filename):
+    if '.' in filename and filename.rsplit('.',1)[1].lower():
+        return True
+    else:
+        return False
+    
 
 @login.user_loader
 def loader(user_id):
@@ -46,11 +56,21 @@ def registration(usertype):
                     db.session.add(u)
                     db.session.flush()
                     r=int(a['instagram'])+int(a['facebook'])+int(a['youtube'])
-                    f=(request.files['image']).read()
-                    i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],image=f,reach=r)
-                    db.session.add(i)
-                    db.session.commit()
-                    return redirect(url_for('home'))
+                    f=request.files['image']
+
+                    if f and checkext(f.filename):
+                        filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+                        f.save(filepath)
+                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],image=f.filename,reach=r)
+                        db.session.add(i)
+                        db.session.commit()
+                        return redirect(url_for('home'))
+                    else:
+                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],reach=r)
+                        db.session.add(i)
+                        db.session.commit()
+                        return redirect(url_for('home'))
+
                 else:
                     flash("First name should not be numeric or alphanumeric",'danger')
                     return redirect(url_for('registration',usertype=usertype))
@@ -65,11 +85,22 @@ def registration(usertype):
                     u=Roles(username=a['username'],password=a['pswd'],type=usertype)
                     db.session.add(u)
                     db.session.flush()
-                    f=(request.files['image']).read()
-                    s=Sponsor(sponsor_id=u.user_id,company_name=a['cname'],industry=a['industry'],image=f,budget=float(a['budget']))
-                    db.session.add(s)
-                    db.session.commit()
-                    return redirect(url_for('home'))
+                    f=request.files['image']
+                    if f and checkext(f.filename):
+                        filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+                        f.save(filepath)
+                        #relative_filepath = os.path.join('static', f.filename)
+                        print(filepath)
+                        #print(relative_filepath)
+                        s=Sponsor(sponsor_id=u.user_id,company_name=a['cname'],industry=a['industry'],image=f.filename,budget=float(a['budget']))
+                        db.session.add(s)
+                        db.session.commit()
+                        return redirect(url_for('home'))
+                    else:
+                        s=Sponsor(sponsor_id=u.user_id,company_name=a['cname'],industry=a['industry'],budget=float(a['budget']))
+                        db.session.add(s)
+                        db.session.commit()
+                        return redirect(url_for('home'))
                 else:
                     flash("Company name should not be numeric or alphanumeric",'danger')
                     return redirect(url_for('registration',usertype=usertype))
@@ -105,27 +136,27 @@ def addcampaign():
         if a['title'] and a['requirement'] and a['start'] and a['end'] and a['niche'] and a['amount'] :
             start= datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
             end= datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
-            f=(request.files['image']).read()
-            c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f)
-            db.session.add(c)
-            db.session.flush()
+            f=request.files['image']
+            if f and checkext(f.filename):
+                filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+                f.save(filepath)
+                #relative_filepath = os.path.join('static', f.filename)
+                print(filepath)
+                #print(relative_filepath)
+                c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename)
+                db.session.add(c)
+                db.session.flush()
+            else:
+                c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'])
+                db.session.add(c)
+                db.session.flush()
             t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0,visibility=int(a['visibility']))
             r=Request(campaign_id=c.campaign_id,amount=float(a['amount']))
             db.session.add_all([t,r])
             db.session.commit()
             ca=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
-            z=[]
-            for i in ca:
-                image = i.image.decode("utf-8")
-                campaign_data = {
-                    'campaign_id': campaign.campaign_id,
-                    'image': f"data:image/jpeg;base64,{image}",
-                    'title': campaign.title,
-                    'niche': campaign.niche,
-                    'requirement': campaign.requirement
-                }
-                z.append(campaign_data)
-            return render_template('campaign.html',user=current_user.sponsor,campaign=z)
+            
+            return render_template('campaign.html',user=current_user.sponsor,campaign=ca)
 
 if __name__=='__main__':
     app.run(debug=True)
