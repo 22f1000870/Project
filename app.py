@@ -1,5 +1,3 @@
-
-import base64
 import os
 from flask import Flask,render_template, url_for,redirect,flash,session,request
 from model11 import*
@@ -126,8 +124,9 @@ def log():
 @app.route('/campaign')
 @login_required
 def campaign():
-   c=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
-   return render_template('campaign.html',user=current_user.sponsor,campaign=c)#user=current_user.sponsor,campaign=c)
+   if request.method=='GET':
+    c=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
+    return render_template('campaign.html',user=current_user.sponsor,campaign=c)#user=current_user.sponsor,campaign=c)
 
 @app.route('/campaign/add',methods=['GET','POST'])
 @login_required
@@ -140,27 +139,29 @@ def addcampaign():
             start= datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
             end= datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
             f=request.files['image']
-            if f and checkext(f.filename):
-                filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
-                f.save(filepath)
-                #relative_filepath = os.path.join('static', f.filename)
-                print(filepath)
-                #print(relative_filepath)
-                c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename)
+            if end>start:
+                if f and checkext(f.filename):
+                    filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+                    f.save(filepath)
+                    #relative_filepath = os.path.join('static', f.filename)
+                    print(filepath)
+                    #print(relative_filepath)
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename)
+                    
+                else:
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'])
                 db.session.add(c)
-                db.session.flush()
+                db.session.flush()   
+                t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0,visibility=int(a['visibility']))
+                r=Request(campaign_id=c.campaign_id,amount=float(a['amount']))
+                db.session.add_all([t,r])
+                db.session.commit()
+                
+                return redirect(url_for('campaign'))
             else:
-                c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'])
-                db.session.add(c)
-                db.session.flush()
-            t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0,visibility=int(a['visibility']))
-            r=Request(campaign_id=c.campaign_id,amount=float(a['amount']))
-            db.session.add_all([t,r])
-            db.session.commit()
-            ca=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
+                flash("Incorrect Date Time")
+                return render_template('addcampaign.html')
             
-            return render_template('campaign.html',user=current_user.sponsor,campaign=ca)
-
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
 

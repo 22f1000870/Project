@@ -10,7 +10,6 @@
     <style>
         .aa{
             background: radial-gradient(circle,white, #7e89e2);
-               
             height: 100vh;
         }
         .aj{
@@ -28,102 +27,158 @@
             border-radius: 10px;
             
         }
+        .form-label {
+          display: inline-block;
+        }
         
     </style>
 </head>
-<body class="aa">
-    <div
-        class="container-fluid "
-    >
-       <div class="row">
-       <div class="col-12">
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container-fluid ">
-              <a class="navbar-brand" href="#">
-                <img src="../static/IMG-20210422-WA0000.jpg" alt=" " width="30" height="24" class="d-inline-block align-text-top">
-                    Sponsor : {{user.company_name}}</a>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link"  href="#">Profile</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Campaign</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Statistics</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Find</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link " href="#">Logout</a>
-                  </li>
-                </ul>
+<body class="aa ">
+
+  <div class="container-fluid h-100 ">
+
+    <div class="row mb-3 ">
+
+      <div class="col-12">
+
+        <nav class="navbar navbar-expand-lg jk">
+
+          <div class="container-fluid jk ">
+
+            <a class="navbar-brand" href="#">
+              
+              <img src="../static/IMG-20210422-WA0000.jpg" alt=" " width="30" height="24" class="d-inline-block align-text-top">Sponsor : {{user.company_name}}</a>
+
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+              <ul class="navbar-nav">
+
+                <li class="nav-item">
+                  <a class="nav-link"  href="#">Profile</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Statistics</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Find</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link " href="#">Logout</a>
+                </li>
+
+              </ul>
+
+            </div>
+
+          </div>
+
+        </nav>
+
+      </div>
+        
+    </div>
+
+    <div class="row mb-3">
+
+      <div class="col">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+        <ul>
+
+        {% for category,message in messages %}
+        <li class="{{category}}">{{ message}}</li>
+          {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% endwith %}
+      
+        <form  action="/campaign/add" enctype="multipart/form-data" class="form-control align-items-center" method="post">
+
+          <div class="row align-items-center mb-3">
+            <div class="col d-flex flex-wrap mb-2">
+              <label for="title" class="form-label badge bg-dark">Title</label>
+              <input type="text" class="input-text " id="title" name="title">
+              
+            </div>
+
+            <div class="col d-flex flex-wrap mb-2">
+              <label for="req" class="form-label badge bg-dark">Requirement</label>
+              <input type="text" class="input-text" id="req" name="requirement">
+            </div>
+          </div>
+
+          <div class="row align-items-center mb-3">
+            <div class="col d-flex flex-wrap mb-2">
+              <label for="start" class="form-label badge bg-dark">Start Time</label>
+              <input type="datetime-local" class="form-control-sm" id="start" name="start">
+              
+            </div>
+            <div class="col d-flex flex-wrap mb-2">
+              <label for="end" class="form-label  badge bg-dark">End Time</label>
+              <input type="datetime-local" class="form-control-sm " id="end" name="end">
+            </div>
+          </div>
+
+          <div class="form-row align-items-center">
+            <div class="col d-flex flex-wrap mb-2">
+              <label class="badge bg-dark " for="niche">Niche</label>
+              <select class="form-select-sm " id="niche" name="niche">
+                <option class="text-light bg-dark" value="Gaming">Gaming</option>
+                <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
+                <option class="text-light bg-dark" value="Politics">Politics</option>
+                <option class="text-light bg-dark" value="Tourism">Tourism</option>
+              </select>
+            </div>
+            <div class="col d-flex flex-wrap mb-2">
+              <label class="badge bg-dark " for="amount">Amount</label>
+              <input class="  input-text border-1 " type="number" step="0.01" id="amount" name="amount">
+            </div>
+             
+            <div class="col d-flex flex-wrap mb-2">
+              <label class="badge bg-dark" for="visibility">visibility</label>
+              <select class="'form-select-sm " id="visibility" name="visibility">
+                <option  class="text-light bg-dark" value="0" >Public</option>
+                <option class="text-light bg-dark" value="1">Private</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row align-items-center">
+            <div class="col-12 d-flex flex-wrap">
+              <label class="badge bg-dark" for="image">Upload Image</label>
+              <input class="form-control-sm" type="file" name="image" id="image">
+              <div class="mt-3 d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg text-light ">Submit</button>
               </div>
             </div>
-          </nav>
+          </div><br>
 
-        </div>
-        </div>
-    </div>
-    <div class="container md  border border-5 rounded-bottom shadow bg-blue">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    <ul>
-                    {% for category,message in messages %}
-                        <li class="{{category}}">{{ message}}</li>
-                    {% endfor %}
-                    </ul>
-                    {% endif %}
-        {% endwith %}
-        <form  action="/campaign/add" enctype="multipart/form-data" class="form-control align-items-center" method="post">
-            <div class="form-row">
-                <label for="title" class="form-label ms-5 badge bg-dark">Title</label>
-                <input type="text" class="input-text ms-1" id="title" name="title">
-                <label for="req" class="form-label ms-5 badge bg-dark">Requirement</label>
-                <input type="text" class="input-text" id="req" name="requirement">
-            </div><br>
-            <div class="form-row">
-                <label for="start" class="form-label ms-3 badge bg-dark">Start Time</label>
-                <input type="datetime-local" class="form-control-sm" id="start" name="start">
-                <label for="end" class="form-label ms-5 badge bg-dark">End Time</label>
-                <input type="datetime-local" class="form-control-sm ms-4" id="end" name="end">
-
-            </div><br>
-            <div class="form-row ">
-                <label class="badge bg-dark ms-3" for="niche">Niche</label>
-                <select class="form-select-sm ms-4" id="niche" name="niche">
-                    <option class="text-light bg-dark" value="Gaming">Gaming</option>
-                    <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
-                    <option class="text-light bg-dark" value="Politics">Politics</option>
-                    <option class="text-light bg-dark" value="Tourism">Tourism</option>
-                </select>
-                <label class="badge bg-dark ms-2" for="amount">Amount</label>
-                <input class="  input-text border-1 ms-2" type="number" step="0.01" id="amount" name="amount">
-                <label class="badge bg-dark ms-2" for="visibility">visibility</label>
-                <select class="'form-select-sm " id="visibility" name="visibility">
-                    <option  class="text-light bg-dark" value="0" >Public</option>
-                    <option class="text-light bg-dark" value="1">Private</option>
-                </select>
-            </div><br>
-            <div class="form-row">
-              <label class="badge bg-dark" for="image">Upload Image</label>
-                <input
-                    class="form-control-sm"
-                    type="file"
-                    name="image"
-                    id="image">
-                <div class="mt-3 d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary btn-lg text-light ">Submit</button>
-                </div><br>
-            </div>
+        
         </form>
+
+        </div>
+
+      
+
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
