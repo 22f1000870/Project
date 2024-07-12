@@ -117,6 +117,9 @@ def log():
         if u:
             login_user(u)
             return redirect(url_for('campaign'))
+        else:
+            flash("Wrong user credentials")
+            return render_template('login.html')
 
 
 
