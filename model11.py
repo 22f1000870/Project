@@ -24,7 +24,7 @@ class Sponsor(db.Model,UserMixin):
     sponsor_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     company_name=db.Column(db.String,nullable=False,unique=True)
     industry=db.Column(db.String,nullable=False)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     budget=db.Column(db.Double,nullable=False)
     
     campaign=db.relationship('Campaign',backref=db.backref('sponsor'))
@@ -35,13 +35,12 @@ class Campaign(db.Model,UserMixin):
     sponsor_id=db.Column(db.Integer,db.ForeignKey('sponsor.sponsor_id'))
     campaign_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
     title=db.Column(db.String,nullable=False)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     niche=db.Column(db.String,nullable=False)
     requirement=db.Column(db.String)
-    visibility=db.Column(db.Integer,nullable=False)
-    amount=db.Column(db.Double,nullable=False)
+    amount=db.Column(db.Double)
     time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False))
-    request=db.relationship('CI',backref=db.backref('campaign'))
+    request=db.relationship('Request',backref=db.backref('campaign'))
     
     
 class Influencer(db.Model,UserMixin):
@@ -49,7 +48,7 @@ class Influencer(db.Model,UserMixin):
     influencer_id=db.Column(db.Integer,db.ForeignKey('roles.user_id'),primary_key=True)
     fname=db.Column(db.String,nullable=False)
     lname=db.Column(db.String)
-    image=db.Column(db.LargeBinary)
+    image=db.Column(db.String)
     reach=db.Column(db.Integer)
     niche=db.Column(db.String,nullable=False)
 
@@ -59,8 +58,10 @@ class Time(db.Model,UserMixin):
     start=db.Column(db.DateTime,nullable=False)
     end=db.Column(db.DateTime,nullable=False)
     status=db.Column(db.Integer,nullable=False)
+    visibility=db.Column(db.Integer,nullable=False)
     
-class CI(db.Model,UserMixin):
+class Request(db.Model,UserMixin):
+    __tablename__='request'
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'),primary_key=True)
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
-    
+    amount=db.Column(db.Double,nullable=False)
