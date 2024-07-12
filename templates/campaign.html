@@ -18,78 +18,95 @@
             background:radial-gradient(ellipse,white,#7e89e2);
         }
         .jk{
-            background:radial-gradient(ellipse,white,white);
+            background:radial-gradient(ellipse,white,#7e89e2);
         }
     </style>
 </head>
 <body class="aa">
-    <div
-        class="container-fluid jk"
-    >
-       <div class="row">
-       <div class="col-12">
-        <nav class="navbar navbar-expand-lg  fixed-top">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">
+    
+  <div class="container-fluid h-100 ">
+
+    <div class="row mb-3  ">
+
+      <div class="col-12">
+
+        <nav class="navbar navbar-expand-lg jk">
+
+          <div class="container-fluid jk ">
+
+            <a class="navbar-brand" href="#">
+
                 <img src="{{url_for('static',filename=user.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
                     Sponsor : {{user.company_name}}</a>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link"  href="#">Profile</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Campaign</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Statistics</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Find</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link " href="#">Logout</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
+            </a>
 
-        </div>
-        </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+              <ul class="navbar-nav">
+
+                <li class="nav-item">
+                  <a class="nav-link"  href="#">Profile</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Statistics</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Find</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link " href="#">Logout</a>
+                </li>
+
+              </ul>
+
+            </div>
+
+          </div>
+
+        </nav>
+             
+
+      </div>
+
     </div>
-    <div class="container-fluid h-75 aj bg-dark">
-        <div class="row align-items-center">
-          {% if campaign %}
-          {% for i in campaign %}
+    
+    
+    <div class="row align-items-center">
+      {% if campaign %}
+      {% for i in campaign %}
             
-            <div class="col">
-              
-                <a href="/details/{{i.campaign_id}}">
-                <figure class="figure">
-                  
-                    <img src="{{ url_for('static',filename=i.image)}}" class="figure-img  rounded" alt="i.title " width="200px" height="200px">
-                  
-                    <figcaption class="figure-caption">{{i.title}}</figcaption>
-                  </figure>
-                </a>
+      <div class="col">
+        
+        <a href="/details/{{i.campaign_id}}">
+          <figure class="figure">
+            <img src="{{ url_for('static',filename=i.image)}}" class="figure-img  rounded" alt="i.title " width="200px" height="200px">
+            <figcaption class="figure-caption">{{i.title}}</figcaption>
+          </figure>
+        </a>
 
-            </div>
+      </div>
           
-          {% endfor %}
-          {% endif %}
-        </div>
-    </div>
-    <a href="/campaign/add" style="display: flex;justify-content: center; margin-top: 10px;">
+      {% endfor %}
+      {% endif %}
+      <a href="/campaign/add" style="display: flex;justify-content: center;">
 
         <i class="bi bi-plus-circle-dotted fs-1"></i>
         
-    </a>   
+      </a>   
     </div>
+    
+  </div>
     
           
           
@@ -99,6 +116,6 @@
     
 
     <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

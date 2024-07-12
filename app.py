@@ -117,7 +117,7 @@ def log():
             return redirect(url_for('campaign'))
         else:
             flash("Wrong user credentials")
-            return render_template('login.html')
+            return redirect(url_for('home'))
 
 
 
@@ -160,8 +160,19 @@ def addcampaign():
                 return redirect(url_for('campaign'))
             else:
                 flash("Incorrect Date Time")
-                return render_template('addcampaign.html')
+        
+                return redirect(url_for('addcampaign'))
+        else:
+            flash("empty field, please fill up!")
+            return redirect(url_for('addcampaign'))
             
+@app.route('/details/<int:id>',methods=['GET','POST'])
+@login_required
+def details(id):
+    if request.method=='GET':
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        return render_template('details.html',campaign=c)
+
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
 
