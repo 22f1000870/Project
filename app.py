@@ -159,7 +159,7 @@ def addcampaign():
             return render_template('campaign.html',user=current_user.sponsor,campaign=ca)
 
 if __name__=='__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
 
 
 
