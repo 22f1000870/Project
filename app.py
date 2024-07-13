@@ -146,7 +146,7 @@ def addcampaign():
                     #relative_filepath = os.path.join('static', f.filename)
                     print(filepath)
                     #print(relative_filepath)
-                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename)
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename,amount=a['amount'])
                     
                 else:
                     c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'])
@@ -171,8 +171,8 @@ def addcampaign():
 def details(id):
     if request.method=='GET':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
-        r=db.session.query(Request).filter(Request.campaign_id==id).first()
-        return render_template('details.html',campaign=c,influencer=c.time)
+        t=db.session.query(Time).filter(Time.campaign_id==c.campaign_id).first()
+        return render_template('details.html',campaign=c,user=current_user.sponsor,time=t)
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)

@@ -105,18 +105,18 @@
                     </div>
 
                     <div class="col">
-                        <p class="h4 ">Requirement : {{campaign.requiremnt}}</p>
+                        <p class="h4 ">Requirement : {{campaign.requirement}}</p>
                     </div>
 
                 </div>
 
                 <div class="row align-items-center mt-3">
                     <div class="col">
-                        <p class="h4 ">Start Time : {{campaign.start}}</p>
+                        <p class="h4 ">Start Time : {{time.start}}</p>
                     </div>
 
                     <div class="col">
-                        <p class="h4 ">End Time : {{campaign.end}}</p>
+                        <p class="h4 ">End Time : {{time.end}}</p>
                     </div>
 
                 </div>
@@ -127,7 +127,13 @@
                     </div>
 
                     <div class="col">
-                        <p class="h4">Visibility : {{campaign.visibility}}</p>
+                        <p class="h4">Visibility : 
+                            {% if time.visibility==1%}
+                                Private
+                            {% else %}
+                                Public
+                            {% endif %}
+                        </p>
                         
                     </div>
 
@@ -135,20 +141,20 @@
 
                 <div class="row align-items-center mt-3">
                     <div class="col">
-                        <a href="/addcampaign">
+                        <a href="/campaign/add">
                             <button type="button" class="btn btn-dark">Update Campaign</button>
                         </a>
                     </div>
 
                     <div class="col">
                         <p class="h4">Influencer :
-                            {% if influencer%} 
-                                {{influencer.influencer_id}}
+                            {% if campaign.influencer_id %} 
+                                {{campaign.influencer_id}}
                             {% else %}
                             <a href="/find">
                                 <button type="button" class="btn btn-dark">Find Influencer</button>
                             </a>
-
+                            {% endif %}
                         </p>
                         
 

@@ -38,7 +38,7 @@ class Campaign(db.Model,UserMixin):
     image=db.Column(db.String)
     niche=db.Column(db.String,nullable=False)
     requirement=db.Column(db.String)
-    amount=db.Column(db.Double,nullanle=False)
+    amount=db.Column(db.Double,nullable=False)
     influencer_id=(db.Column(db.Integer,db.ForeignKey('influencer.influencer_id')))
     time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False))
     request=db.relationship('Request',backref=db.backref('campaign'))
