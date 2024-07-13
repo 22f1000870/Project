@@ -171,7 +171,8 @@ def addcampaign():
 def details(id):
     if request.method=='GET':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
-        return render_template('details.html',campaign=c)
+        r=db.session.query(Request).filter(Request.campaign_id==id).first()
+        return render_template('details.html',campaign=c,influencer=c.time)
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
