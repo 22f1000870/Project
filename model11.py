@@ -38,9 +38,10 @@ class Campaign(db.Model,UserMixin):
     image=db.Column(db.String)
     niche=db.Column(db.String,nullable=False)
     requirement=db.Column(db.String)
-    amount=db.Column(db.Double)
-    time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False))
-    request=db.relationship('Request',backref=db.backref('campaign'))
+    amount=db.Column(db.Double,nullable=True)
+    influencer_id=(db.Column(db.Integer,db.ForeignKey('influencer.influencer_id')))
+    time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False),cascade='all,delete-orphan')
+    request=db.relationship('Request',backref=db.backref('campaign'),cascade='all,delete-orphan')
     
     
 class Influencer(db.Model,UserMixin):
@@ -62,6 +63,7 @@ class Time(db.Model,UserMixin):
     
 class Request(db.Model,UserMixin):
     __tablename__='request'
-    campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'),primary_key=True)
+    request_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
+    campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
     amount=db.Column(db.Double,nullable=False)

@@ -20,6 +20,9 @@
         .jk{
             background:radial-gradient(ellipse,white,#7e89e2);
         }
+        .h5 {
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="aa">
@@ -53,7 +56,7 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                                    <a class="nav-link active" aria-current="page" href="/campaign">Campaign</a>
                                 </li>
 
                                 <li class="nav-item">
@@ -79,6 +82,87 @@
 
             </div>
 
+        </div>
+
+        <div class="row mb-3">
+
+            <div class="col">
+                <figure class="figure">
+                    <img src="{{ url_for('static',filename=campaign.image)}}" class="figure-img  rounded" alt="campaign.title " width="200px" height="200px">
+                    <figcaption class="figure-caption">{{campaign.title}}</figcaption>
+                  </figure>
+            </div>
+        
+        </div>
+
+        
+        <div class="row border border-5 mb-3">
+            <div class="container-fluid bg-white h-100">
+
+                <div class="row align-items-center">
+                    <div class="col">
+                        <p class="h4">Title : {{campaign.title}}</p>
+                    </div>
+
+                    <div class="col">
+                        <p class="h4 ">Requirement : {{campaign.requirement}}</p>
+                    </div>
+
+                </div>
+
+                <div class="row align-items-center mt-3">
+                    <div class="col">
+                        <p class="h4 ">Start Time : {{time.start}}</p>
+                    </div>
+
+                    <div class="col">
+                        <p class="h4 ">End Time : {{time.end}}</p>
+                    </div>
+
+                </div>
+
+                <div class="row align-items-center mt-3">
+                    <div class="col">
+                        <p class="h4">Niche : {{campaign.niche}}</p>
+                    </div>
+
+                    <div class="col">
+                        <p class="h4">Visibility : 
+                            {% if time.visibility==1%}
+                                Private
+                            {% else %}
+                                Public
+                            {% endif %}
+                        </p>
+                        
+                    </div>
+
+                </div>
+
+                <div class="row align-items-center mt-3">
+                    <div class="col">
+                        <a href="/campaign/{{campaign.campaign_id}}" class="btn btn-dark">Update Campaign </a>
+                    </div>
+
+                    <div class="col">
+                        <p class="h4">Influencer :
+                            {% if campaign.influencer_id %} 
+                                {{campaign.influencer_id}}
+                            {% else %}
+                            <a href="/find">
+                                <button type="button" class="btn btn-dark">Find Influencer</button>
+                            </a>
+                            {% endif %}
+                        </p>
+                        
+
+                       
+                    </div>
+
+                </div>
+
+
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

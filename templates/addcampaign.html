@@ -45,9 +45,9 @@
 
           <div class="container-fluid jk ">
 
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/registration/sponsor">
               
-              <img src="../static/IMG-20210422-WA0000.jpg" alt=" " width="30" height="24" class="d-inline-block align-text-top">Sponsor : {{user.company_name}}</a>
+              <img src="{{url_for('static',filename=user.image)}}" alt="  " width="30" height="24" class="d-inline-block align-text-top">Sponsor : {{user.company_name}}</a>
 
             </a>
 
@@ -64,7 +64,7 @@
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                  <a class="nav-link active" aria-current="page" href="/campaign">Campaign</a>
                 </li>
 
                 <li class="nav-item">
@@ -106,38 +106,41 @@
         </ul>
         {% endif %}
         {% endwith %}
-      
-        <form  action="/campaign/add" enctype="multipart/form-data" class="form-control align-items-center" method="post">
+        
+        
+        <form  action="{{url}}" enctype="multipart/form-data" class="form-control align-items-center" method="post">
 
           <div class="row align-items-center mb-3">
             <div class="col d-flex flex-wrap mb-2">
               <label for="title" class="form-label badge bg-dark">Title</label>
-              <input type="text" class="input-text " id="title" name="title">
+              <input type="text" class="input-text " id="title" name="title"
+              value="{{campaign[0].title | default('')}}"/>
+              
               
             </div>
 
             <div class="col d-flex flex-wrap mb-2">
               <label for="req" class="form-label badge bg-dark">Requirement</label>
-              <input type="text" class="input-text" id="req" name="requirement">
+              <input type="text" class="input-text" id="req" name="requirement" value="{{campaign[0].requirement | default("")}}">
             </div>
           </div>
 
           <div class="row align-items-center mb-3">
             <div class="col d-flex flex-wrap mb-2">
               <label for="start" class="form-label badge bg-dark">Start Time</label>
-              <input type="datetime-local" class="form-control-sm" id="start" name="start">
+              <input type="datetime-local" class="form-control-sm" id="start" name="start" value="{{campaign[1].start | default('')}}">
               
             </div>
             <div class="col d-flex flex-wrap mb-2">
               <label for="end" class="form-label  badge bg-dark">End Time</label>
-              <input type="datetime-local" class="form-control-sm " id="end" name="end">
+              <input type="datetime-local" class="form-control-sm " id="end" name="end" value="{{campaign[1].end | default('')}}">
             </div>
           </div>
 
           <div class="form-row align-items-center">
             <div class="col d-flex flex-wrap mb-2">
               <label class="badge bg-dark " for="niche">Niche</label>
-              <select class="form-select-sm " id="niche" name="niche">
+              <select class="form-select-sm " id="niche" name="niche" value="{{campaign[0].niche | default('')}}">
                 <option class="text-light bg-dark" value="Gaming">Gaming</option>
                 <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
                 <option class="text-light bg-dark" value="Politics">Politics</option>
@@ -146,12 +149,12 @@
             </div>
             <div class="col d-flex flex-wrap mb-2">
               <label class="badge bg-dark " for="amount">Amount</label>
-              <input class="  input-text border-1 " type="number" step="0.01" id="amount" name="amount">
+              <input class="  input-text border-1 " type="number" step="0.01" id="amount" name="amount" value="{{amount | default('')}}">
             </div>
              
             <div class="col d-flex flex-wrap mb-2">
               <label class="badge bg-dark" for="visibility">visibility</label>
-              <select class="'form-select-sm " id="visibility" name="visibility">
+              <select class="'form-select-sm " id="visibility" name="visibility" value="{{campaign[1].visibility | default('')}}">
                 <option  class="text-light bg-dark" value="0" >Public</option>
                 <option class="text-light bg-dark" value="1">Private</option>
               </select>
