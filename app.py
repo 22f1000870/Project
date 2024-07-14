@@ -201,7 +201,11 @@ def updatecampaign(id):
         os.remove(filepath)
         return redirect(url_for('details',id=c[0].campaign_id))
         
-
+@app.route('/find/<usertype>',methods=['GET','POST'])
+def find(usertype):
+    if request.method=='GET':
+        if usertype=='influencer':
+            return render_template('find.html',user=current_user.sponsor)
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
 
