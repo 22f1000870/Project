@@ -132,10 +132,11 @@ def campaign():
 @login_required
 def addcampaign():
     if request.method=='GET':
-        return render_template('addcampaign.html',user=current_user.sponsor)
+        campaign=[{},{}]
+        return render_template('addcampaign.html',user=current_user.sponsor,campaign=campaign,url=url_for('addcampaign'))
     elif request.method=='POST':
         a=request.form
-        if a['title'] and a['requirement'] and a['start'] and a['end'] and a['niche'] and a['amount'] :
+        if a['title'] and a['requirement'] and a['start'] and a['end'] and a['niche'] :
             start= datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
             end= datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
             f=request.files['image']
@@ -149,7 +150,7 @@ def addcampaign():
                     c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename,amount=a['amount'])
                     
                 else:
-                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'])
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],amount=a['amount'])
                 db.session.add(c)
                 db.session.flush()   
                 t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0,visibility=int(a['visibility']))
@@ -172,7 +173,34 @@ def details(id):
     if request.method=='GET':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
         t=db.session.query(Time).filter(Time.campaign_id==c.campaign_id).first()
+        
         return render_template('details.html',campaign=c,user=current_user.sponsor,time=t)
+    
+
+@app.route('/campaign/<int:id>',methods=['GET','POST'])
+@login_required
+def updatecampaign(id):
+    if request.method=='GET':
+        c=db.session.query(Campaign,Time).filter(Campaign.campaign_id==id,Time.campaign_id==id).first()
+        r=db.session.query(Request).filter(Request.campaign_id==c[0].campaign_id).first()
+        return render_template('addcampaign.html',user=current_user.sponsor,campaign=c,url=url_for('updatecampaign',id=c[0].campaign_id),amount=r.amount)
+    else:
+        c=db.session.query(Campaign,Time,Request).filter(Campaign.campaign_id==id,Time.campaign_id==id,Request.campaign_id==id).first()
+        a=request.form
+        i=request.files['image']
+        img=c[0].image
+        c[0].title=a['title']; c[0].niche=a['niche']; c[0].requirement=a['requirement'];c[2].amount=float(a['amount'])
+        file=os.path.join(app.config['UPLOAD_FOLDER'], i.filename)
+        i.save(file)
+        c[0].image=i.filename
+        c[1].start=datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
+        c[1].end=datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
+        c[1].visibility=int(a['visibility'])
+        db.session.commit()#
+        filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
+        os.remove(filepath)
+        return redirect(url_for('details',id=c[0].campaign_id))
+        
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000,debug=True)
