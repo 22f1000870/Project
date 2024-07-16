@@ -30,29 +30,7 @@
         padding: 10px;
         }
 
-        .search_input{
-        color: black;
-        border: 0;
-        outline: 0;
-        background: none;
-        width: 0;
-        margin-top:5px;
-        caret-color:transparent;
-        line-height: 40px;
-        transition: width 0.4s linear;
-        }
-
-        .search .search_input{
-        padding: 10px;
-        width: auto;
-        caret-color:#7e89e2;
-        transition: width 0.4s linear;
-        }
-        
-        .search:hover > .search_icon{
-        background: #7e89e2 ;
-        color: #fff;
-        }
+       
 
         .search_icon{
         height: 50px;
@@ -66,9 +44,6 @@
         background-color:black;
         }
         
-        a:link{
-            text-decoration:none;
-        }    
     </style>
 </head>
 <body class="aa">
@@ -126,11 +101,43 @@
 
     </div>
 
-    <div class="row mb-3  ">
-      <div class="search">
-        <input class="search_input" type="search" name="" placeholder="Search here...">
-        <a href="#" class="search_icon"><i class="bi bi-search"></i></a>
+    <div class="row mb-3 ">
+      <div class="input-group-prepend">
+        <form class="form-control jk" method="post" action="/search/sponsor">
+          <input type="search" class="form-control-lg" aria-label="Text input with dropdown button" name="search">
+          <select class="form-select-sm ms-1" id="niche" name="niche">
+            <option class="text-light bg-dark" value="Gaming">Gaming</option>
+            <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
+            <option class="text-light bg-dark" value="Politics">Politics</option>
+            <option class="text-light bg-dark" value="Tourism">Tourism</option>
+          </select>
+          
+          <button type="submit" class="search_icon"><i class="bi bi-search"></i>
+          
+        </form> 
       </div>
+    </div>
+    
+    <div class="row mb-3 ">
+      <ul class="list-group ">
+        {% for r in results %}
+        <li class="list-group-item d-flex justify-content-between ">{{r.fname +" "+r.lname}}
+
+          <a href="/search/sponsor" class="d-flex justify-content-center">
+         
+            <button type="button" class="btn btn-dark ">View</button>
+
+          </a>
+          <a href="/search/sponsor" class="d-flex justify-content-end">
+         
+            <button type="button" class="btn btn-dark ">Request</button>
+
+          </a>
+
+        </li>
+        
+        {% endfor %}
+      </ul>
     </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

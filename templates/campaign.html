@@ -84,12 +84,20 @@
             
       <div class="col">
         
-        <a href="/details/{{i.campaign_id}}">
+        <div class="card" style="width: 18rem;">
+          <img src=".{{ url_for('static',filename=i.image)}}" class="card-img-top" alt="{{i.title}}">
+          <div class="card-body">
+            <h5 class="card-title">{{i.title}}</h5>
+            <p class="card-text">{{i.requirement}}</p>
+            <a href="/details/{{i.campaign_id}}" class="btn btn-primary">Get details</a>
+          </div>
+        </div>
+        <!-- <a href="/details/{{i.campaign_id}}">
           <figure class="figure">
             <img src="{{ url_for('static',filename=i.image)}}" class="figure-img  rounded" alt="i.title " width="200px" height="200px">
             <figcaption class="figure-caption">{{i.title}}</figcaption>
           </figure>
-        </a>
+        </a> -->
 
       </div>
           

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,UserMixin,current_user,login_user,logout_user,login_required
-
+from sqlalchemy import event, text
+from sqlalchemy.orm import Session
 
 db=SQLAlchemy()
 login=LoginManager()
@@ -52,6 +53,7 @@ class Influencer(db.Model,UserMixin):
     image=db.Column(db.String)
     reach=db.Column(db.Integer)
     niche=db.Column(db.String,nullable=False)
+    amount=db.Column(db.String)
 
 class Time(db.Model,UserMixin):
     __tablename__='time'
@@ -67,3 +69,31 @@ class Request(db.Model,UserMixin):
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
     amount=db.Column(db.Double,nullable=False)
+
+# @event.listens_for(Influencer.__table__, 'after_create')
+# def create_search_index(target, connection, **kw):
+#     connection.execute(text('CREATE VIRTUAL TABLE influencer_index USING fts5(influencer_id,fname,niche)'))
+
+# @event.listens_for(Influencer,'after_insert')
+# def insert_influencer(mapper,connection,target):
+#     connection.execute(
+#         text('INSERT INTO influencer_index (influencer_id, fname, niche) VALUES (:influencer_id, :fname, :niche)'),
+#         {'influencer_id': target.influencer_id, 'fname': target.fname, 'niche': target.niche}
+#     )
+    
+
+# @event.listens_for(Influencer,'after_update')
+# def update_influencer(mapper,connection,target):
+#     connection.execute(
+#         text('UPDATE influencer_index SET fname = :fname, niche = :niche WHERE influencer_id = :influencer_id'),
+#         {'influencer_id': target.influencer_id, 'fname': target.fname, 'niche': target.niche}
+#     )
+        
+
+# @event.listens_for(Influencer,'after_delete')
+# def delete_influencer(mapper,connection,target):
+#     connection.execute(
+#         text('DELETE FROM influencer_index WHERE influencer_id = :influencer_id'),
+#         {'influencer_id': target.influencer_id}
+#     )
+        

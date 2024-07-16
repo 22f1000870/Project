@@ -1,5 +1,6 @@
 import os
 from flask import Flask,render_template, url_for,redirect,flash,session,request
+from sqlalchemy import or_
 from model11 import*
 from datetime import datetime
 
@@ -18,7 +19,9 @@ login.init_app(app)
 
 app.app_context().push()
 
-db.create_all()
+
+
+
 
 def checkext(filename):
     if '.' in filename and filename.rsplit('.',1)[1].lower():
@@ -59,12 +62,12 @@ def registration(usertype):
                     if f and checkext(f.filename):
                         filepath=os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
                         f.save(filepath)
-                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],image=f.filename,reach=r)
+                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],image=f.filename,reach=r,niche=a['niche'])
                         db.session.add(i)
                         db.session.commit()
                         return redirect(url_for('home'))
                     else:
-                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],reach=r)
+                        i=Influencer(influencer_id=u.user_id,fname=a['fname'],lname=a['lname'],reach=r,niche=a['niche'])
                         db.session.add(i)
                         db.session.commit()
                         return redirect(url_for('home'))
@@ -113,12 +116,30 @@ def log():
        
         u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
         if u:
-            login_user(u)
-            return redirect(url_for('campaign'))
+            if u.type=='sponsor':
+                login_user(u)
+                i=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
+                c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id).all()
+                r=db.session.query(Request).filter(Request.influencer_id==current_user.user_id).all()
+                pc=r.campaign.all()
+                return render_template('idashboard.html',influencer=i,campaign=c,request=r,pending=pc)
+            elif u.type=='influencer':
+                login_user(u)
+
+                return redirect('/dashboard')
+            elif u.type=='admin':
+                login_user(u)
+                return redirect('/dashboard')
         else:
             flash("Wrong user credentials")
             return redirect(url_for('home'))
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    if 
+
+    
 
 
 @app.route('/campaign')
@@ -173,8 +194,8 @@ def details(id):
     if request.method=='GET':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
         t=db.session.query(Time).filter(Time.campaign_id==c.campaign_id).first()
-        
-        return render_template('details.html',campaign=c,user=current_user.sponsor,time=t)
+        r=db.session.query(Request).filter(Request.campaign_id==c.campaign_id).first()
+        return render_template('details.html',campaign=c,user=current_user.sponsor,time=t,amount=r.amount)
     
 
 @app.route('/campaign/<int:id>',methods=['GET','POST'])
@@ -201,12 +222,32 @@ def updatecampaign(id):
         os.remove(filepath)
         return redirect(url_for('details',id=c[0].campaign_id))
         
-@app.route('/find/<usertype>',methods=['GET','POST'])
-def find(usertype):
-    if request.method=='GET':
-        if usertype=='influencer':
-            return render_template('find.html',user=current_user.sponsor)
+
+        
+@app.route('/search/<usertype>',methods=['GET','POST'])
+@login_required
+def search(usertype):
+    if usertype=='sponsor':
+        
+
+        if request.method=='POST':
+            a=request.form
+            search_query=a['search']
+            results = db.session.query(Influencer).filter(or_(
+                Influencer.niche == a['niche'],
+                Influencer.fname.like(f"%{search_query}%"),Influencer.lname.like(f"%{search_query}%"))
+            ).all()
+            return render_template('find.html', results=results, user=current_user.sponsor)
+        
+        else:
+            results=Influencer.query.all()
+            print(results)
+            return render_template('find.html',results=results, user=current_user.sponsor)
+
+
+
 if __name__=='__main__':
+    db.create_all()
     app.run(host='0.0.0.0',port=5000,debug=True)
 
 
