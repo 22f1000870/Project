@@ -103,7 +103,7 @@
 
     <div class="row mb-3 ">
       <div class="input-group-prepend">
-        <form class="form-control jk" method="post" action="/search/sponsor">
+        <form class="form-control jk" method="post" action="/search/sponsor/{{cid}}">
           <input type="search" class="form-control-lg" aria-label="Text input with dropdown button" name="search">
           <select class="form-select-sm ms-1" id="niche" name="niche">
             <option class="text-light bg-dark" value="Gaming">Gaming</option>
@@ -119,16 +119,17 @@
     </div>
     
     <div class="row mb-3 ">
+      {% if cid %}
       <ul class="list-group ">
         {% for r in results %}
         <li class="list-group-item d-flex justify-content-between ">{{r.fname +" "+r.lname}}
 
-          <a href="/search/sponsor" class="d-flex justify-content-center">
+          <a href="/" class="d-flex justify-content-center">
          
             <button type="button" class="btn btn-dark ">View</button>
 
           </a>
-          <a href="/search/sponsor" class="d-flex justify-content-end">
+          <a href="/request/{{cid}}/{{r.influencer_id}}" class="d-flex justify-content-end">
          
             <button type="button" class="btn btn-dark ">Request</button>
 
@@ -138,6 +139,7 @@
         
         {% endfor %}
       </ul>
+      {% endif %}
     </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

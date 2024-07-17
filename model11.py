@@ -54,7 +54,7 @@ class Influencer(db.Model,UserMixin):
     reach=db.Column(db.Integer)
     niche=db.Column(db.String,nullable=False)
     amount=db.Column(db.String)
-
+    request=db.relationship('Request',backref=db.backref('influencer'),cascade='all,delete-orphan')
 class Time(db.Model,UserMixin):
     __tablename__='time'
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'),primary_key=True)
