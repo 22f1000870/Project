@@ -124,9 +124,34 @@
         {% for r in results %}
         <li class="list-group-item d-flex justify-content-between ">{{r.fname +" "+r.lname}}
 
-          <a href="/" class="d-flex justify-content-center">
-         
-            <button type="button" class="btn btn-dark ">View</button>
+          <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{r.influencer_id}}">
+            View
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="view{{r.influencer_id}}" tabindex="-1" aria-labelledby="title{{r.influencer_id}}" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                
+                <div class="modal-header ">
+                  
+                  <h1 class="modal-title fs-5 " id="title">{{r.fname +"  "+ r.lname}}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <img src="{{url_for('static', filename=r.image)}}" width="100px" height="100px">
+                  <div class="row">
+                    <ul class="list-group">
+                      <li class="list-group-item"><span class="font-weight-bold">Reach :</span>{{r.reach}}</li>
+                      <li class="list-group-item"><span class="font-weight-bold">Niche :</span>{{r.niche}}</li>
+                    </ul>
+                  </div> 
+                </div>
+              </div>
+                
+              </div>
+                
+            </div>
 
           </a>
           <a href="/request/{{cid}}/{{r.influencer_id}}" class="d-flex justify-content-end">

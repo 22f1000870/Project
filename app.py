@@ -19,10 +19,6 @@ login.init_app(app)
 
 app.app_context().push()
 
-
-
-
-
 def checkext(filename):
     if '.' in filename and filename.rsplit('.',1)[1].lower():
         return True
@@ -128,13 +124,14 @@ def dashboard():
     if current_user.type=='influencer':
         
         j=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
-        c=db.session.query(Campaign,Time).filter(Campaign.influencer_id==current_user.user_id,Time.status==1).all()
+        c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id,Campaign.influencer_id==j.influencer_id).all()
         print(c)
         r=db.session.query(Request).filter(Request.influencer_id==current_user.user_id).all()
         print(r)
         pending=[]
         for i in r:
-            z={'request_id':i.request_id,'campaign':i.campaign}
+            t=i.campaign
+            z={'request_id':i.request_id,'campaign':t,'time':t.time,'amount':i.amount}
             print(z['campaign'].image)
             pending.append(z)
         print(pending)
@@ -151,7 +148,12 @@ def dashboard():
 def campaign():
    if request.method=='GET':
     c=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id).all()
-    return render_template('campaign.html',user=current_user.sponsor,campaign=c)#user=current_user.sponsor,campaign=c)
+    campaign=[]
+    for i in c:
+        r={'campaign':i,'request':i.time}
+        print(i.time)
+        campaign.append(r)
+    return render_template('campaign.html',user=current_user.sponsor,campaign=campaign)#user=current_user.sponsor,campaign=c)
 
 @app.route('/campaign/add',methods=['GET','POST'])
 @login_required
@@ -199,7 +201,7 @@ def details(id):
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
         t=db.session.query(Time).filter(Time.campaign_id==c.campaign_id).first()
         r=db.session.query(Request).filter(Request.campaign_id==c.campaign_id).first()
-        return render_template('details.html',campaign=c,user=current_user.sponsor,time=t,amount=r.amount,u=current_user)#
+        return render_template('details.html',campaign=c,user=current_user.sponsor,time=t,amount=c.amount,u=current_user)#
     
 
 @app.route('/campaign/<int:id>',methods=['GET','POST'])
@@ -248,18 +250,70 @@ def search(usertype,id):
         
         else:
             results=Influencer.query.all()
-            print(results)
+            
             return render_template('find.html',results=results, user=current_user.sponsor,cid=id)
+        
+@app.route('/search/influencer')
+def searchinfluencer():
+    if request.method=="POST":
+            a=request.form
+            search_query=a['search']
+            if search_query!="":
+                results=db.session.query(Campaign).filter(or_(Campaign.title.like(f"%{search_query}%"),Campaign.requirement.like(f"%{search_query}%"))).all()
+                z=[]
+                for i in results:
+                    r=i.request
+                    for j in r:
+                        if not j.influencer_id:
+                            result={'campaign':i,'time':i.time}
+                            z.append(result)
+                return render_template('sfind.html',results=z,user=current_user.influencer)
+            else:
+                results = db.session.query(Campaign).filter(Campaign.niche==a['niche']).all()
+                z=[]
+                for i in results:
+                    r=i.request
+                    if not r.influencer_id:
+                        result={'campaign':i,'time':i.time}
+                        z.append(result)
+                return render_template('sfind.html',results=z,user=current_user.influencer)
+    else:
+        results=Campaign.query.all()
+        z=[]
+        for i in results:
+            r=i.request
+            if not r.influencer_id:
+                result={'campaign':i,'time':i.time}
+                z.append(result)
+        return render_template('sfind.html',results=z,user=current_user.influencer)
 
 
-@app.route('/request/<status>/<int:request_id>')
+@app.route('/request/<status>/<int:request_id>',methods=['GET','POST'])
+@login_required
 def requeststatus(status,request_id):
-    if status=='accept':
+    if request.method=='POST' and status=='accept':
         cd=db.session.query(Request).filter(Request.request_id==request_id).first()
-        print(cd.campaign)
+        cd.campaign.influencer_id=current_user.user_id
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==cd.campaign_id).first()
+        c.time.status=1
+        d = db.session.query(Request).filter_by(campaign_id=cd.campaign_id).all()
+        for req in d:
+            db.session.delete(req)
+        
+        # Commit the changes
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+    
+    else:
+        cd=db.session.query(Request).filter(Request.request_id==request_id).first()
+        cd.campaign.influencer_id=None
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+
 
 
 @app.route('/request/<int:cid>/<int:id>')
+@login_required
 def crequest(cid,id):
     r=db.session.query(Request).filter(Request.campaign_id==cid,Request.influencer_id.is_(None)).first()
     if r:
@@ -267,10 +321,30 @@ def crequest(cid,id):
         db.session.commit()
         print(r.influencer_id)
         flash('Request send successfully')
-        return redirect(url_for('details',id=cid))
+        return redirect(url_for('campaign'))
     else:
-        flash('You have already request influencer please wait till they accept or reject!')
-        return redirect(url_for('details',id=cid))
+        flash('You have already requested a influencer please wait till they accept or reject!')
+        return redirect(url_for('campaign'))
+    
+
+@app.route("/end/<int:id>",methods=['GET'])
+def endcampaign(id):
+    c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+    c.influencer_id=None
+    c.time.status=0
+    r=Request(campaign_id=id,amount=c.amount)
+    db.session.add(r)
+    db.session.commit()
+    return redirect(url_for('dashboard'))
+
+
+@app.route("/delete/<int:id>",methods=['GET','POST'])
+def deletecampaign(id):
+    c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+    db.session.delete(c)
+    db.session.commit()
+    return redirect('/campaign')
+
 
 if __name__=='__main__':
     db.create_all()

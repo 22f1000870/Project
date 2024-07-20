@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <style>
+        .aa{
+            background: radial-gradient(circle,white, #7e89e2);
+               
+            height: 100vh;
+        }
+        .aj{
+            margin-top: 60px;
+            background:radial-gradient(ellipse,white,#7e89e2);
+        }
+        .jk{
+            background:radial-gradient(ellipse,white,#7e89e2);
+        }
+
+        .search{
+        margin-bottom: auto;
+        margin-top: auto;
+        height: 70px;
+        background-color: #fff;
+        border-radius: 40px;
+        padding: 10px;
+        }
+
+       
+
+        .search_icon{
+        height: 50px;
+        width: 50px;
+        float: right;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        color:white;
+        background-color:black;
+        }
+        
+    </style>
+</head>
+<body class="aa">
+    
+  <div class="container-fluid h-100 ">
+
+    <div class="row mb-3  ">
+
+      <div class="col-12">
+
+        <nav class="navbar navbar-expand-lg jk">
+
+          <div class="container-fluid jk ">
+
+            <a class="navbar-brand" href="#">
+
+                <img src="{{url_for('static',filename=user.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                    Influencer : {{user.fname+"  "+user.lname}}</a>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+              <ul class="navbar-nav">
+
+                <li class="nav-item">
+                  <a class="nav-link"  href="#">Profile</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Statistics</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link " href="#">Logout</a>
+                </li>
+
+              </ul>
+
+            </div>
+
+          </div>
+
+        </nav>
+             
+
+      </div>
+
+    </div>
+
+    <div class="row mb-3 ">
+      <div class="input-group-prepend">
+        <form class="form-control jk" method="post" action="/search/influencer">
+          <input type="search" class="form-control-lg" aria-label="Text input with dropdown button" name="search">
+          <select class="form-select-sm ms-1" id="niche" name="niche">
+            <option class="text-light bg-dark" value="Gaming">Gaming</option>
+            <option  class="text-light bg-dark" value="Cosmetics">Cosmetics</option>
+            <option class="text-light bg-dark" value="Politics">Politics</option>
+            <option class="text-light bg-dark" value="Tourism">Tourism</option>
+          </select>
+          
+          <button type="submit" class="search_icon"><i class="bi bi-search"></i>
+          
+        </form> 
+      </div>
+    </div>
+    
+    <div class="row mb-3 ">
+      <ul class="list-group ">
+        {% for r in results %}
+        <li class="list-group-item d-flex justify-content-between ">{{r.camapign.title}}
+
+          <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{r.campaign.campaign_id}}">
+            View
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="view{{r.camapign.campaign_id}}" tabindex="-1" aria-labelledby="title{{r.campaign.campaign_id}}" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                
+                <div class="modal-header ">
+                  
+                  <h1 class="modal-title fs-5 " id="title">{{r.camapign.title}}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <img src="{{url_for('static', filename=r.campaign.image)}}" width="100px" height="100px">
+                  <div class="row">
+                    <ul class="list-group">
+                      <li class="list-group-item"><span class="font-weight-bold">Requirement :</span>{{r.campaign.requirement}}</li>
+                      <li class="list-group-item"><span class="font-weight-bold">Niche :</span>{{r.campaign.niche}}</li>
+                      <li class="list-group-item"><span class="font-weight-bold">Start :</span>{{r.time.start}}</li>
+                      <li class="list-group-item"><span class="font-weight-bold">End :</span>{{r.time.end}}</li>
+                      <li class="list-group-item"><span class="font-weight-bold">Amount :</span>{{r.campaign.amount}}</li>
+                    </ul>
+                  </div> 
+                </div>
+              </div>
+                
+              </div>
+                
+            </div>
+
+          </a>
+          <a href="/request/{{cid}}/{{r.influencer_id}}" class="d-flex justify-content-end">
+         
+            <button type="button" class="btn btn-dark ">Request</button>
+
+          </a>
+
+        </li>
+        
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
+</html>
