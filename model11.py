@@ -54,21 +54,26 @@ class Influencer(db.Model,UserMixin):
     reach=db.Column(db.Integer)
     niche=db.Column(db.String,nullable=False)
     amount=db.Column(db.String)
-    request=db.relationship('Request',backref=db.backref('influencer'),cascade='all,delete-orphan')
+    request=db.relationship('Irequest',backref=db.backref('influencer'),cascade='all,delete-orphan')
 class Time(db.Model,UserMixin):
     __tablename__='time'
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'),primary_key=True)
     start=db.Column(db.DateTime,nullable=False)
     end=db.Column(db.DateTime,nullable=False)
     status=db.Column(db.Integer,nullable=False)
-    visibility=db.Column(db.Integer,nullable=False)
+    
     
 class Request(db.Model,UserMixin):
     __tablename__='request'
     request_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
-    amount=db.Column(db.Double,nullable=False)
+    
+class Irequest(db.Model,UserMixin):
+    __tablename__='irequest'
+    request_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
+    campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
+    influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
 
 # @event.listens_for(Influencer.__table__, 'after_create')
 # def create_search_index(target, connection, **kw):

@@ -73,7 +73,7 @@
               <ul class="navbar-nav">
 
                 <li class="nav-item">
-                  <a class="nav-link"  href="#">Profile</a>
+                  <a class="nav-link"  href="/dashboard">Profile</a>
                 </li>
 
                 <li class="nav-item">
@@ -119,22 +119,34 @@
     </div>
     
     <div class="row mb-3 ">
+      {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+
+                {% for message in messages %}
+                <li class="fs-4 badge bg-dark">{{ message}}</li>
+                  {% endfor %}
+        
+            </ul>
+            {% endif %}
+      {% endwith %}
       <ul class="list-group ">
+        {% if results %}
         {% for r in results %}
-        <li class="list-group-item d-flex justify-content-between ">{{r.camapign.title}}
+        <li class="list-group-item d-flex justify-content-between ">{{r.campaign.title}}
 
           <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{r.campaign.campaign_id}}">
             View
           </button>
 
           <!-- Modal -->
-          <div class="modal fade" id="view{{r.camapign.campaign_id}}" tabindex="-1" aria-labelledby="title{{r.campaign.campaign_id}}" aria-hidden="true">
+          <div class="modal fade" id="view{{r.campaign.campaign_id}}" tabindex="-1" aria-labelledby="title{{r.campaign.campaign_id}}" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 
                 <div class="modal-header ">
                   
-                  <h1 class="modal-title fs-5 " id="title">{{r.camapign.title}}</h1>
+                  <h1 class="modal-title fs-5 " id="title">{{r.campaign.title}}</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -156,10 +168,7 @@
             </div>
 
           </a>
-          <a href="/request/{{cid}}/{{r.influencer_id}}" class="d-flex justify-content-end">
-         
-            <button type="button" class="btn btn-dark ">Request</button>
-
+          <a href="/request/{{r.campaign.campaign_id}}/{{user.influencer_id}}" class=" btn btn-primary d-flex justify-content-end"> Request
           </a>
 
         </li>

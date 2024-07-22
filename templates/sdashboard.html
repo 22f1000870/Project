@@ -1,47 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Option 1: Include in HTML -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sponsor Dashboard</title>
+    <style>
+        .aa{
+            background: radial-gradient(circle,white, #7e89e2);
+               
+            height: 100vh;
+        }
+        .aj{
+            margin-top: 60px;
+            background:radial-gradient(ellipse,white,#7e89e2);
+        }
+        .jk{
+            background:radial-gradient(ellipse,white,#7e89e2);
+        }
+
+        .campaign-card {
+          margin-bottom: 2rem;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+          border: none;
+        }
+
+        .campaign-image {
+          height: 200px;
+          object-fit: cover;
+        }
+
+        .progress-bar {
+          background-color: #007bff;
+        }
+    </style>
 </head>
 <body>
     
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">
-                <img src="../static/IMG-20210422-WA0000.jpg" alt="" width="30" height="24" class="d-inline-block align-text-top">
-                    Sponsor : {{cname}}</a>
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"  href="#">Profile</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Campaign</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Statistics</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link " href="#">Find</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link " href="#">Logout</a>
-                  </li>
-                </ul>
+  <div class="container-fluid h-100 ">
+
+    <div class="row mb-3  ">
+
+      <div class="col-12">
+
+        <nav class="navbar navbar-expand-lg jk">
+
+          <div class="container-fluid jk ">
+
+            <a class="navbar-brand" href="#">
+
+                <img src="{{url_for('static',filename=user.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                    Sponsor : {{user.company_name}}</a>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+              <ul class="navbar-nav">
+
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/dashboard">Profile</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link"  href="/search/influencer">Search</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Statistics</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link " href="#">Logout</a>
+                </li>
+
+              </ul>
+
+            </div>
+
+          </div>
+
+        </nav>
+             
+
+      </div>
+
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        {% for c in campaign %}
+        
+        <div class="col-md-4">
+            <div class="card campaign-card">
+              <img src="{{url_for('static',filename=c.image)}}" class="card-img-top campaign-image" alt="Campaign Image 1">
+              <div class="card-body">
+                <h5 class="card-title">{{c.title}}</h5>
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0"
+                    aria-valuemax="100">75%</div>
+                </div>
+                <a href="/end/{{c.campaign_id}}" class="btn btn-danger mt-3">End Campaign</a>
               </div>
             </div>
-          </nav>
-    <!-- Content Area -->
-    
+        </div>
+        {% endfor %}
+    </div><br>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+    <div class="row ">
+      <div class="container mt-5">
+        <div class="row mt-3  d-flex justify-content-center">
+            {% for i in request %}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="row g-0 d-flex justify-content-center">
+                        <div class="col-md-4">
+                            <img src="{{ url_for('static', filename=i.campaign.image) }}" class="img rounded-start" alt="{{ i.campaign.title }}" width="240px" height="160px">
+                        </div>
+                        <div class="col-md-8 mt-4">
+                            <div class="card-body jk">
+                                <h5 class="card-title">{{ i.campaign.title }}</h5>
+                                <p class="card-text">Niche: {{ i.campaign.niche }}</p>
+                                <p class="card-text"><small class="text-muted">Budget: ${{ i.campaign.amount }}</small></p>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <form action="/request/accept/{{ i.request_id }}" method="post" style="display:inline;">
+                                        <button type="submit" value="1" name="button" class="btn btn-success ms-3">Accept</button>
+                                    </form>
+                                    <form action="/request/reject/{{ i.request_id }}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger ms-3">Reject</button>
+                                    </form>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{i.request_id}}">
+                                      View
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="view{{i.request_id}}" tabindex="-1" aria-labelledby="title{{i.request_id}}" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          
+                                          <div class="modal-header ">
+                                            
+                                            <h1 class="modal-title fs-5 " id="title">{{i.campaign.title}}</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <img src="{{url_for('static', filename=i.campaign.image)}}" width="100px" height="100px">
+                                            <div class="row">
+                                              <ul class="list-group">
+                                                <li class="list-group-item"><span class="font-weight-bold">Requirement :</span>{{i.campaign.requirement}}</li>
+                                                <li class="list-group-item"><span class="font-weight-bold">Start :</span>{{i.time.start}}</li>
+                                                <li class="list-group-item"><span class="font-weight-bold">End :</span>{{i.time.end}}</li>
+                                                <li class="list-group-item"><span class="font-weight-bold">Amount :</span>{{i.amount|string}}</li>
+                                              </ul>
+                                            </div> 
+                                            <div class="modal-footer">
+                                              
+                                            </div>
+                                          </div>
+                                        </div>
+                                          
+                                        </div>
+                                          
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
 </html>
