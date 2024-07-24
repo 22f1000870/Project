@@ -14,6 +14,7 @@ class Roles(db.Model,UserMixin):
     username=db.Column(db.String,unique=True,nullable=False)
     password=db.Column(db.String,nullable=False)
     type=db.Column(db.String,nullable=False)
+    flag=db.Column(db.Integer,nullable=False)
     
     sponsor=db.relationship('Sponsor',uselist=False,backref=db.backref('role',uselist=False),cascade='all,delete-orphan')
     influencer=db.relationship('Influencer',uselist=False,backref=db.backref('role',uselist=False),cascade='all,delete-orphan')
@@ -28,7 +29,7 @@ class Sponsor(db.Model,UserMixin):
     image=db.Column(db.String)
     budget=db.Column(db.Double,nullable=False)
     
-    campaign=db.relationship('Campaign',backref=db.backref('sponsor'))
+    campaign=db.relationship('Campaign',backref=db.backref('sponsor'),cascade='all,delete-orphan')
     
 
 class Campaign(db.Model,UserMixin):
@@ -41,6 +42,7 @@ class Campaign(db.Model,UserMixin):
     requirement=db.Column(db.String)
     amount=db.Column(db.Double,nullable=True)
     influencer_id=(db.Column(db.Integer,db.ForeignKey('influencer.influencer_id')))
+    flag=db.Column(db.Integer,nullable=False)
     time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False),cascade='all,delete-orphan')
     request=db.relationship('Request',backref=db.backref('campaign'),cascade='all,delete-orphan')
     irequest=db.relationship('Irequest',backref=db.backref('campaign'),cascade='all,delete-orphan')

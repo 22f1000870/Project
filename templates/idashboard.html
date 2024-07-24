@@ -10,13 +10,13 @@
     <title>Influencer Dashboard</title>
     <style>
         .aa{
-            background: radial-gradient(circle,white, #7e89e2);
+            background: radial-gradient(circle,#7e89e2, #0b0577);
                
             height: 100vh;
         }
         .aj{
-            margin-top: 60px;
-            background:radial-gradient(ellipse,white,#7e89e2);
+           
+            background-color: azure;
         }
         .jk{
             background:radial-gradient(ellipse,white,#7e89e2);
@@ -38,7 +38,7 @@
         }
     </style>
 </head>
-<body>
+<body class="aa">
     
   <div class="container-fluid h-100 ">
 
@@ -46,11 +46,11 @@
 
       <div class="col-12">
 
-        <nav class="navbar navbar-expand-lg jk">
+        <nav class="navbar navbar-expand-lg aj">
 
-          <div class="container-fluid jk ">
+          <div class="container-fluid aj ">
 
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/update/influencer">
 
                 <img src="{{url_for('static',filename=influencer.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
                     Influencer : {{influencer.fname +" "+ influencer.lname}}</a>
@@ -65,19 +65,16 @@
               <ul class="navbar-nav">
 
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Profile</a>
+                  <a class="nav-link active" aria-current="page" href="/dashboard">Profile</a>
                 </li>
 
                 <li class="nav-item">
                   <a class="nav-link"  href="/search/influencer">Search</a>
                 </li>
 
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Statistics</a>
-                </li>
 
                 <li class="nav-item">
-                  <a class="nav-link " href="#">Logout</a>
+                  <a class="nav-link " href="/logout">Logout</a>
                 </li>
 
               </ul>

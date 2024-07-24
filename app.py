@@ -19,6 +19,13 @@ login.init_app(app)
 
 app.app_context().push()
 
+def admin():
+    a=db.session.query(Roles).filter(Roles.type=='admin').first()
+    if not a:
+        bv=Roles(username="admin",password="123",type='admin',flag=0)
+        db.session.add(bv)
+        db.session.commit()
+
 def checkext(filename):
     if '.' in filename and filename.rsplit('.',1)[1].lower():
         return True
@@ -33,15 +40,16 @@ def loader(user_id):
 @app.route("/",methods=["GET"])
 def home():
     if request.method=="GET":
+        admin()
         return render_template("login.html")
 
 @app.route("/registration/<usertype>",methods=["GET","POST"])
 def registration(usertype):
     if request.method=="GET":
         if usertype=="influencer":
-            return render_template("registration1.html")
+            return render_template("registration1.html",influencer=False)
         else:
-            return render_template("registration.html")
+            return render_template("registration.html",sponsor=False)
     else:
         if usertype=='influencer':
 
@@ -49,7 +57,7 @@ def registration(usertype):
             
             if a['fname'] and a['username'] and a['pswd']:
                 if a['fname'].isalpha():
-                    u=Roles(username=a['username'],password=a['pswd'],type=usertype)
+                    u=Roles(username=a['username'],password=a['pswd'],type=usertype,flag=0)
                     db.session.add(u)
                     db.session.flush()
                     r=int(a['instagram'])+int(a['facebook'])+int(a['youtube'])
@@ -79,7 +87,7 @@ def registration(usertype):
             a=request.form
             if a['cname'] and a['username'] and a['pswd'] and a['budget']  and a['industry']:
                 if a['cname'].isalpha():
-                    u=Roles(username=a['username'],password=a['pswd'],type=usertype)
+                    u=Roles(username=a['username'],password=a['pswd'],type=usertype,flag=0)
                     db.session.add(u)
                     db.session.flush()
                     f=request.files['image']
@@ -111,7 +119,7 @@ def log():
     if request.method=='POST':
        
         u=db.session.query(Roles).filter(Roles.username==request.form.get('username'),Roles.password==request.form.get('pswd')).first()
-        if u:
+        if u and u.flag==0:
             login_user(u)
             return redirect(url_for('dashboard'))
         else:
@@ -120,11 +128,12 @@ def log():
 
 
 @app.route('/dashboard',methods=['GET'])
+@login_required
 def dashboard():
     if current_user.type=='influencer':
         
         j=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
-        c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id,Campaign.influencer_id==j.influencer_id).all()
+        c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id,Campaign.influencer_id==j.influencer_id,Campaign.flag==0).all()
         print(c)
         r=db.session.query(Request).filter(Request.influencer_id==current_user.user_id).all()
         print(r)
@@ -138,7 +147,7 @@ def dashboard():
         return render_template('idashboard.html',influencer=j,campaign=c,request=pending)
     elif current_user.type=='sponsor':
 
-        t=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id,Campaign.influencer_id.isnot(None)).all()
+        t=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id,Campaign.influencer_id.isnot(None),Campaign.flag==0).all()
         r=db.session.query(Irequest).filter(Irequest.sponsor_id==current_user.user_id).all()
         
         pending=[]
@@ -148,6 +157,8 @@ def dashboard():
             z={'request_id':i.request_id,'campaign':c,'time':c.time,'amount':c.amount,'influencer':i.influencer}
             pending.append(z)
         return render_template('sdashboard.html',user=current_user.sponsor,campaign=t,request=pending)
+    else:
+        pass
 
 
     
@@ -184,10 +195,10 @@ def addcampaign():
                     #relative_filepath = os.path.join('static', f.filename)
                     print(filepath)
                     #print(relative_filepath)
-                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename,amount=a['amount'])
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],image=f.filename,amount=a['amount'],flag=0)
                     
                 else:
-                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],amount=a['amount'])
+                    c=Campaign(sponsor_id=current_user.user_id,title=a['title'],niche=a['niche'],requirement=a['requirement'],amount=a['amount'],flag=0)
                 db.session.add(c)
                 db.session.flush()   
                 t=Time(campaign_id=c.campaign_id,start=start,end=end,status=0)
@@ -218,16 +229,18 @@ def updatecampaign(id):
         i=request.files['image']
         img=c[0].image
         c[0].title=a['title']; c[0].niche=a['niche']; c[0].requirement=a['requirement'];c[0].amount=float(a['amount'])
-        file=os.path.join(app.config['UPLOAD_FOLDER'], i.filename)
-        i.save(file)
-        c[0].image=i.filename
+        if i and checkext(i.filename):
+            file=os.path.join(app.config['UPLOAD_FOLDER'], i.filename)
+            i.save(file)
+            c[0].image=i.filename
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
+            os.remove(filepath)
         c[1].start=datetime.strptime(a['start'],"%Y-%m-%dT%H:%M")
         c[1].end=datetime.strptime(a['end'],"%Y-%m-%dT%H:%M")
         
         db.session.commit()#
-        filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
-        os.remove(filepath)
-        return redirect(url_for('details',id=c[0].campaign_id))
+        
+        return redirect(url_for('campaign',id=c[0].campaign_id))#
         
 
         
@@ -240,26 +253,27 @@ def search(usertype,id):
             a=request.form
             search_query=a['search']
             if search_query !="":
-                results = db.session.query(Influencer).filter(or_(
-                    Influencer.fname.like(f"%{search_query}%"),Influencer.lname.like(f"%{search_query}%"))).all()
+                results = db.session.query(Influencer).filter(and_(or_(
+                    Influencer.fname.like(f"%{search_query}%"),Influencer.lname.like(f"%{search_query}%")),Influencer.flag==0)).all()
                 return render_template('find.html', results=results, user=current_user.sponsor,cid=id)
             else:
-                results = db.session.query(Influencer).filter(Influencer.niche==a['niche']).all()
+                results = db.session.query(Influencer).filter(Influencer.niche==a['niche'],Influencer.flag==0).all()
                 return render_template('find.html',results=results,user=current_user.sponsor,cid=id)
 
         
         else:
-            results=Influencer.query.all()
+            results=db.session.query(Influencer).filter(Influencer.flag==0).all()
             
             return render_template('find.html',results=results, user=current_user.sponsor,cid=id)
         
 @app.route('/search/influencer',methods=['GET',"POST"])
+@login_required
 def searchinfluencer():
     if request.method=="POST":
             a=request.form
             search_query=a['search']
             if search_query!="":
-                results=db.session.query(Campaign).filter(or_(Campaign.title.like(f"%{search_query}%"),Campaign.requirement.like(f"%{search_query}%"))).all()
+                results=db.session.query(Campaign).filter(and_(or_(Campaign.title.like(f"%{search_query}%"),Campaign.requirement.like(f"%{search_query}%")),Campaign.flag==0)).all()
                 z=[]
                 if results:
                     for i in results:
@@ -272,7 +286,7 @@ def searchinfluencer():
                 else:
                     return render_template('sfind.html',results=z,user=current_user.influencer)
             else:
-                results = db.session.query(Campaign).filter(Campaign.niche==a['niche']).all()
+                results = db.session.query(Campaign).filter(Campaign.niche==a['niche'],Campaign.flag==0).all()
                 z=[]
                 print(results)#
                 if results:
@@ -287,7 +301,7 @@ def searchinfluencer():
                 else:
                     return render_template('sfind.html',results=z,user=current_user.influencer)
     else:
-        results=Campaign.query.all()
+        results=db.session.query(Campaign).filter(Campaign.flag==0).all()
         z=[]
         if results:
             print(results)
@@ -382,6 +396,7 @@ def crequest(cid,id):
 
 
 @app.route("/end/<int:id>",methods=['GET'])
+@login_required
 def endcampaign(id):
     if current_user.type=='influencer':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
@@ -402,11 +417,101 @@ def endcampaign(id):
 
 
 @app.route("/delete/<int:id>",methods=['GET','POST'])
+@login_required
 def deletecampaign(id):
     c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
     db.session.delete(c)
     db.session.commit()
     return redirect('/campaign')
+
+
+@app.route('/update/sponsor',methods=['GET','POST'])
+@login_required
+def updatesponsor():
+    if request.method=='GET':
+        s=db.session.query(Sponsor).filter(Sponsor.sponsor_id==current_user.user_id).first()
+        return render_template('registration.html',sponsor=s)
+    elif request.method=='POST':
+        s=db.session.query(Sponsor).filter(Sponsor.sponsor_id==current_user.user_id).first()
+        a=request.form
+        i=request.files['image']
+        img=s.image
+        s.company_name=a['cname'];s.budget=float(a['budget']);s.industry=a['industry']
+        if i and checkext(i.filename):
+            file=os.path.join(app.config['UPLOAD_FOLDER'],i.filename)
+            i.save(file)
+            s.image=i.filename
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
+            os.remove(filepath)
+        db.session.commit()
+        return redirect('/dashboard')
+
+@app.route('/update/influencer',methods=['GET','POST'])
+@login_required
+def updateinfluencer():
+    if request.method=='GET':
+        s=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
+        return render_template('registration1.html',influencer=s)
+    elif request.method=='POST':
+        s=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
+        a=request.form
+        i=request.files['image']
+        img=s.image
+        s.fname=a['fname'];s.lname=a['lname'];s.reach=(int(a['instagram'])+int(a['facebook'])+int(a['youtube']));s.niche=a['niche']
+        if i and checkext(i.filename):
+            file=os.path.join(app.config['UPLOAD_FOLDER'],i.filename)
+            i.save(file)
+            s.image=i.filename
+            filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
+            os.remove(filepath)
+        db.session.commit()
+        return redirect('/dashboard')
+
+@app.route('/flag/<what>/<int:id>',methods=['GET','POST'])
+@login_required
+def flag(what,id):
+    if what=='campaign':
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        c.flag=1
+        db.session.commit()
+    elif what=='influencer':
+        c=db.session.query(Roles).filter(Roles.user_id==id).first()
+        c.flag=1
+        db.session.commit()
+    elif what=='sponsor':
+        c=db.session.query(Roles).filter(Roles.user_id==id).first()
+        c.flag=1
+        db.session.commit()
+
+@app.route('/unflag/<what>/<int:id>',methods=['GET','POST'])
+@login_required
+def unflag(what,id):
+    if what=='campaign':
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        c.flag=0
+        db.session.commit()
+    elif what=='influencer':
+        c=db.session.query(Roles).filter(Roles.user_id==id).first()
+        c.flag=0
+        db.session.commit()
+    elif what=='sponsor':
+        c=db.session.query(Roles).filter(Roles.user_id==id).first()
+        c.flag=0
+        db.session.commit()
+
+@app.route('/delete/<int:user>',methods=['GET','POST'])
+@login_required
+def delete(user):
+    u=db.session.query(Roles).filter(Roles.user_id==user).first()
+    db.session.delete(u)
+    db.session.commit()
+
+@app.route('/logout',methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    session.clear()
+    return redirect('/')
 
 
 if __name__=='__main__':
