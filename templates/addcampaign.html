@@ -60,7 +60,7 @@
               <ul class="navbar-nav">
 
                 <li class="nav-item">
-                  <a class="nav-link"  href="#">Profile</a>
+                  <a class="nav-link"  href="/dashboard">Profile</a>
                 </li>
 
                 <li class="nav-item">
@@ -69,10 +69,6 @@
 
                 <li class="nav-item">
                   <a class="nav-link" href="#">Statistics</a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Find</a>
                 </li>
 
                 <li class="nav-item">
@@ -150,14 +146,6 @@
             <div class="col d-flex flex-wrap mb-2">
               <label class="badge bg-dark " for="amount">Amount</label>
               <input class="  input-text border-1 " type="number" step="0.01" id="amount" name="amount" value="{{amount | default('')}}">
-            </div>
-             
-            <div class="col d-flex flex-wrap mb-2">
-              <label class="badge bg-dark" for="visibility">visibility</label>
-              <select class="'form-select-sm " id="visibility" name="visibility" value="{{campaign[1].visibility | default('')}}">
-                <option  class="text-light bg-dark" value="0" >Public</option>
-                <option class="text-light bg-dark" value="1">Private</option>
-              </select>
             </div>
           </div>
 

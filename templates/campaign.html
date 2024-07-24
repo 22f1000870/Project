@@ -34,7 +34,7 @@
 
           <div class="container-fluid jk ">
 
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/update/sponsor">
 
                 <img src="{{url_for('static',filename=user.image)}}" alt="" width="30" height="24" class="d-inline-block align-text-top">
                     Sponsor : {{user.company_name}}</a>
@@ -49,7 +49,7 @@
               <ul class="navbar-nav">
 
                 <li class="nav-item">
-                  <a class="nav-link"  href="#">Profile</a>
+                  <a class="nav-link"  href="/dashboard">Profile</a>
                 </li>
 
                 <li class="nav-item">
@@ -58,10 +58,6 @@
 
                 <li class="nav-item">
                   <a class="nav-link" href="#">Statistics</a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Find</a>
                 </li>
 
                 <li class="nav-item">
@@ -83,17 +79,75 @@
     
     
     <div class="row align-items-center">
+      {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+
+                {% for message in messages %}
+                <li class="fs-4 badge bg-dark">{{ message}}</li>
+                  {% endfor %}
+        
+            </ul>
+            {% endif %}
+      {% endwith %}
+
       {% if campaign %}
       {% for i in campaign %}
             
       <div class="col">
         
-        <a href="/details/{{i.campaign_id}}">
+        <div class="card mt-3" style="width: 18rem;">
+          <img src=".{{ url_for('static',filename=i.campaign.image)}}" class="card-img-top" alt="{{i.campaign.title}}" width="200px" height="200px">
+          <div class="card-body">
+            <h5 class="card-title">{{i.campaign.title}}</h5>
+            <p class="card-text">{{i.campaign.requirement}}</p>
+            <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#details{{i.campaign.campaign_id}}">
+              Details
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="details{{i.campaign.campaign_id}}" tabindex="-1" aria-labelledby="title{{i.campaign.campaign_id}}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  
+                  <div class="modal-header ">
+                    
+                    <h1 class="modal-title fs-5 " id="title">{{i.title}}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <img src="{{url_for('static', filename=i.campaign.image)}}" width="100px" height="100px">
+                    <div class="row">
+                      <ul class="list-group">
+                        <li class="list-group-item"><span class="font-weight-bold">Requirement :</span>{{i.campaign.requirement}}</li>
+                        <li class="list-group-item"><span class="font-weight-bold">Start :</span>{{i.request.start}}</li>
+                        <li class="list-group-item"><span class="font-weight-bold">End :</span>{{i.request.end}}</li>
+                        <li class="list-group-item"><span class="font-weight-bold">Niche :</span>{{i.campaign.niche}}</li>
+                        <li class="list-group-item"><span class="font-weight-bold">Amount :</span>{{i.campaign.amount|string}}</li>
+                        
+                      </ul>
+                    </div> 
+                    <div class="modal-footer">
+                      {% if not i.campaign.influencer_id %}
+                      <a href="/search/sponsor/{{i.campaign.campaign_id}}" class="btn btn-primary">Search Influencer</a>
+                      <a href="/delete/{{i.campaign.campaign_id}}" class="btn btn-danger">Delete Campaign</a>
+                      {% endif %}
+                      <a href="/campaign/{{i.campaign.campaign_id}}" class="btn btn-primary">Update Campaign</a>
+                    </div>
+                  </div>
+                </div>
+                  
+                </div>
+                  
+            </div>
+          </div>
+        </div>
+        <!-- <a href="/details/{{i.campaign_id}}">
           <figure class="figure">
             <img src="{{ url_for('static',filename=i.image)}}" class="figure-img  rounded" alt="i.title " width="200px" height="200px">
             <figcaption class="figure-caption">{{i.title}}</figcaption>
           </figure>
-        </a>
+        </a> -->
 
       </div>
           
