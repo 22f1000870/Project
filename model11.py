@@ -43,6 +43,7 @@ class Campaign(db.Model,UserMixin):
     influencer_id=(db.Column(db.Integer,db.ForeignKey('influencer.influencer_id')))
     time=db.relationship('Time',uselist=False,backref=db.backref('campaign',uselist=False),cascade='all,delete-orphan')
     request=db.relationship('Request',backref=db.backref('campaign'),cascade='all,delete-orphan')
+    irequest=db.relationship('Irequest',backref=db.backref('campaign'),cascade='all,delete-orphan')
     
     
 class Influencer(db.Model,UserMixin):
@@ -74,6 +75,7 @@ class Irequest(db.Model,UserMixin):
     request_id=db.Column(db.Integer,primary_key=True,autoincrement=True)
     campaign_id=db.Column(db.Integer,db.ForeignKey('campaign.campaign_id'))
     influencer_id=db.Column(db.Integer,db.ForeignKey('influencer.influencer_id'))
+    sponsor_id=db.Column(db.Integer,db.ForeignKey('sponsor.sponsor_id'))
 
 # @event.listens_for(Influencer.__table__, 'after_create')
 # def create_search_index(target, connection, **kw):

@@ -73,11 +73,11 @@
               <ul class="navbar-nav">
 
                 <li class="nav-item">
-                  <a class="nav-link"  href="#">Profile</a>
+                  <a class="nav-link"  href="/dashboard">Profile</a>
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                  <a class="nav-link active" aria-current="page" href="/campaign">Campaign</a>
                 </li>
 
                 <li class="nav-item">
@@ -124,7 +124,7 @@
         {% for r in results %}
         <li class="list-group-item d-flex justify-content-between ">{{r.fname +" "+r.lname}}
 
-          <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{r.influencer_id}}">
+          <button type="button" class="btn btn-primary d-flex justify-content-center  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{r.influencer_id}}">
             View
           </button>
 
@@ -154,10 +154,7 @@
             </div>
 
           </a>
-          <a href="/request/{{cid}}/{{r.influencer_id}}" class="d-flex justify-content-end">
-         
-            <button type="button" class="btn btn-dark ">Request</button>
-
+          <a href="/request/{{cid}}/{{r.influencer_id}}" class=" btn btn-primary d-flex justify-content-end">Request
           </a>
 
         </li>

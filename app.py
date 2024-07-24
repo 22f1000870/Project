@@ -1,6 +1,6 @@
 import os
 from flask import Flask,render_template, url_for,redirect,flash,session,request
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 from model11 import*
 from datetime import datetime
 
@@ -137,7 +137,17 @@ def dashboard():
         print(pending)
         return render_template('idashboard.html',influencer=j,campaign=c,request=pending)
     elif current_user.type=='sponsor':
-        return redirect(url_for('campaign'))
+
+        t=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id,Campaign.influencer_id.isnot(None)).all()
+        r=db.session.query(Irequest).filter(Irequest.sponsor_id==current_user.user_id).all()
+        
+        pending=[]
+        
+        for i in r:
+            c=i.campaign
+            z={'request_id':i.request_id,'campaign':c,'time':c.time,'amount':c.amount,'influencer':i.influencer}
+            pending.append(z)
+        return render_template('sdashboard.html',user=current_user.sponsor,campaign=t,request=pending)
 
 
     
@@ -282,12 +292,8 @@ def searchinfluencer():
         if results:
             print(results)
             for i in results:
-                r=i.request
-                for j in r:
-                    print(j)
-                    if not j.influencer_id:
-                        result={'campaign':i,'time':i.time}
-                        z.append(result)
+                result={'campaign':i,'time':i.time}
+                z.append(result)
             return render_template('sfind.html',results=z,user=current_user.influencer)
         else:
             return render_template('sfind.html',results=z,user=current_user.influencer)
@@ -296,24 +302,51 @@ def searchinfluencer():
 @app.route('/request/<status>/<int:request_id>',methods=['GET','POST'])
 @login_required
 def requeststatus(status,request_id):
-    if request.method=='POST' and status=='accept':
-        cd=db.session.query(Request).filter(Request.request_id==request_id).first()
-        cd.campaign.influencer_id=current_user.user_id
-        c=db.session.query(Campaign).filter(Campaign.campaign_id==cd.campaign_id).first()
-        c.time.status=1
-        d = db.session.query(Request).filter_by(campaign_id=cd.campaign_id).all()
-        for req in d:
-            db.session.delete(req)
-        
-        # Commit the changes
-        db.session.commit()
-        return redirect(url_for('dashboard'))
+    if current_user.type=='influencer':
+        if request.method=='POST' and status=='accept':
+            cd=db.session.query(Request).filter(Request.request_id==request_id).first()
+            cd.campaign.influencer_id=current_user.user_id
+            c=db.session.query(Campaign).filter(Campaign.campaign_id==cd.campaign_id).first()
+            c.time.status=1
+            d = db.session.query(Request).filter_by(campaign_id=cd.campaign_id).all()
+            ir=db.session.query(Irequest).filter_by(campaign_id=c.campaign_id).all()
+            for j in ir:
+                db.session.delete(j)
+            for req in d:
+                db.session.delete(req)
+            
+            # Commit the changes
+            db.session.commit()
+            return redirect(url_for('dashboard'))
     
-    else:
-        cd=db.session.query(Request).filter(Request.request_id==request_id).first()
-        cd.campaign.influencer_id=None
-        db.session.commit()
-        return redirect(url_for('dashboard'))
+        else:
+            cd=db.session.query(Request).filter(Request.request_id==request_id).first()
+            cd.campaign.influencer_id=None
+            cd.influencer_id=None
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+    elif current_user.type=='sponsor':
+        if request.method=='POST' and status=='accept':
+            cd=db.session.query(Irequest).filter(Irequest.request_id==request_id).first()
+            cd.campaign.influencer_id=current_user.user_id
+            c=db.session.query(Campaign).filter(Campaign.campaign_id==cd.campaign_id).first()
+            c.time.status=1
+            d = db.session.query(Irequest).filter_by(campaign_id=cd.campaign_id).all()
+            r=db.session.query(Request).filter_by(campaign_id=c.campaign_id).all()
+            for j in r:
+                db.session.delete(j)
+            for req in d:
+                db.session.delete(req)
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+        else:
+            cd=db.session.query(Irequest).filter(Irequest.request_id==request_id).first()
+            cd.campaign.influencer_id=None
+            db.session.delete(cd)
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+
+
 
 
 
@@ -332,14 +365,17 @@ def crequest(cid,id):
             flash('You have already requested a influencer please wait till they accept or reject!')
             return redirect(url_for('campaign'))
     else:
-        ir=db.session.query(Irequest).filter(Irequest.campaign_id==cid,Irequest.influencer_id==id)
+        ir=db.session.query(Irequest).filter(Irequest.campaign_id==cid,Irequest.influencer_id==id).first()
        
         if ir:
            
             flash('You have already requested this Campaign please wait till Sponsor accept or reject it !')
             return redirect(url_for('searchinfluencer'))
         else:
-            r=Irequest(campaign_id=cid,influencer_id=id)
+            c=db.session.query(Campaign).filter(Campaign.campaign_id==cid).first()
+            r=Irequest(campaign_id=cid,influencer_id=id,sponsor_id=c.sponsor_id)
+            db.session.add(r)
+            db.session.commit()
             flash('Request Send successfully !')
             return redirect(url_for('searchinfluencer'))
     
@@ -347,13 +383,22 @@ def crequest(cid,id):
 
 @app.route("/end/<int:id>",methods=['GET'])
 def endcampaign(id):
-    c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
-    c.influencer_id=None
-    c.time.status=0
-    r=Request(campaign_id=id,amount=c.amount)
-    db.session.add(r)
-    db.session.commit()
-    return redirect(url_for('dashboard'))
+    if current_user.type=='influencer':
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        c.influencer_id=None
+        c.time.status=0
+        r=Request(campaign_id=id)
+        db.session.add(r)
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+    elif current_user.type=='sponsor':
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        c.influencer_id=None
+        c.time.status=0
+        r=Request(campaign_id=id)
+        db.session.add(r)
+        db.session.commit()
+        return redirect(url_for('dashboard'))
 
 
 @app.route("/delete/<int:id>",methods=['GET','POST'])
