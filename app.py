@@ -158,7 +158,29 @@ def dashboard():
             pending.append(z)
         return render_template('sdashboard.html',user=current_user.sponsor,campaign=t,request=pending)
     else:
-        pass
+        ac=db.session.query(Time).filter(Time.status==1).all()
+        c=db.session.query(Time).filter(Time.status==0).all()
+        inf=Influencer.query.all()
+        spon=Sponsor.query.all()
+        l=[]
+        for i in ac:
+            z={'campaign':i.campaign}
+            l.append(z)
+        influencer=[]
+        for i in inf:
+            f={'influencer':i,'flag':i.role.flag}
+            influencer.append(f)
+        sponsor=[]
+        for i in spon:
+            n={'sponsor':i,'flag':i.role.flag}
+            sponsor.append(n)
+        x=[]
+        for i in c:
+            p={'campaign':i.campaign,'time':i}
+            x.append(p)
+
+        return render_template('adashboard.html',influencer=influencer,sponsor=sponsor,acampaign=l,campaign=x)
+        
 
 
     
@@ -253,16 +275,16 @@ def search(usertype,id):
             a=request.form
             search_query=a['search']
             if search_query !="":
-                results = db.session.query(Influencer).filter(and_(or_(
-                    Influencer.fname.like(f"%{search_query}%"),Influencer.lname.like(f"%{search_query}%")),Influencer.flag==0)).all()
+                results = db.session.query(Influencer).join(Roles).filter(and_(or_(
+                    Influencer.fname.like(f"%{search_query}%"),Influencer.lname.like(f"%{search_query}%")),Roles.flag==0)).all()#
                 return render_template('find.html', results=results, user=current_user.sponsor,cid=id)
             else:
-                results = db.session.query(Influencer).filter(Influencer.niche==a['niche'],Influencer.flag==0).all()
+                results = db.session.query(Influencer).join(Roles).filter(Influencer.niche==a['niche'],Roles.flag==0).all()
                 return render_template('find.html',results=results,user=current_user.sponsor,cid=id)
 
         
         else:
-            results=db.session.query(Influencer).filter(Influencer.flag==0).all()
+            results=db.session.query(Influencer).join(Roles).filter(Roles.flag==0).all()
             
             return render_template('find.html',results=results, user=current_user.sponsor,cid=id)
         
@@ -414,6 +436,16 @@ def endcampaign(id):
         db.session.add(r)
         db.session.commit()
         return redirect(url_for('dashboard'))
+    else:
+        c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
+        c.influencer_id=None
+        c.time.status=0
+        r=Request(campaign_id=id)
+        db.session.add(r)
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+    
+
 
 
 @app.route("/delete/<int:id>",methods=['GET','POST'])
@@ -473,6 +505,11 @@ def flag(what,id):
     if what=='campaign':
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
         c.flag=1
+        ir=db.session.query(Irequest).filter(Irequest.campaign_id==id).all()
+        r=db.session.query(Request).filter(Request.campaign_id==id).first()
+        r.influencer_id=None
+        for i in ir:
+            db.session.delete(i)
         db.session.commit()
     elif what=='influencer':
         c=db.session.query(Roles).filter(Roles.user_id==id).first()
@@ -482,6 +519,7 @@ def flag(what,id):
         c=db.session.query(Roles).filter(Roles.user_id==id).first()
         c.flag=1
         db.session.commit()
+    return redirect('/dashboard')
 
 @app.route('/unflag/<what>/<int:id>',methods=['GET','POST'])
 @login_required
@@ -490,6 +528,7 @@ def unflag(what,id):
         c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
         c.flag=0
         db.session.commit()
+
     elif what=='influencer':
         c=db.session.query(Roles).filter(Roles.user_id==id).first()
         c.flag=0
@@ -498,13 +537,15 @@ def unflag(what,id):
         c=db.session.query(Roles).filter(Roles.user_id==id).first()
         c.flag=0
         db.session.commit()
+    return redirect('/dashboard')
 
-@app.route('/delete/<int:user>',methods=['GET','POST'])
+@app.route('/delete/user/<int:user>',methods=['GET','POST'])
 @login_required
 def delete(user):
     u=db.session.query(Roles).filter(Roles.user_id==user).first()
     db.session.delete(u)
     db.session.commit()
+    return redirect('/dashboard')
 
 @app.route('/logout',methods=['GET'])
 @login_required
