@@ -9,13 +9,12 @@
     <title>Sponsor Dashboard</title>
     <style>
         .aa{
-            background: radial-gradient(circle,white, #7e89e2);
+            background: radial-gradient(circle,#7e89e2, #0b0577);
                
             height: 100vh;
         }
         .aj{
-            margin-top: 60px;
-            background:radial-gradient(ellipse,white,#7e89e2);
+           background-color: azure;
         }
         .jk{
             background:radial-gradient(ellipse,white,#7e89e2);
@@ -30,9 +29,9 @@
 
       <div class="col-12">
 
-        <nav class="navbar navbar-expand-lg jk">
+        <nav class="navbar navbar-expand-lg aj">
 
-          <div class="container-fluid jk ">
+          <div class="container-fluid aj ">
 
             <a class="navbar-brand" href="/update/sponsor">
 
@@ -53,15 +52,13 @@
                 </li>
 
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Campaign</a>
+                  <a class="nav-link active" aria-current="page" href="/campaign">Campaign</a>
                 </li>
 
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Statistics</a>
-                </li>
+                
 
                 <li class="nav-item">
-                  <a class="nav-link " href="#">Logout</a>
+                  <a class="nav-link " href="/logout">Logout</a>
                 </li>
 
               </ul>
@@ -128,8 +125,9 @@
                       </ul>
                     </div> 
                     <div class="modal-footer">
-                      {% if not i.campaign.influencer_id %}
-                      <a href="/search/sponsor/{{i.campaign.campaign_id}}" class="btn btn-primary">Search Influencer</a>
+                      {% if not i.campaign.influencer_id  %}
+                      {% if i.campaign.flag==0 %}
+                      <a href="/search/sponsor/{{i.campaign.campaign_id}}" class="btn btn-primary">Search Influencer</a>{% endif %}
                       <a href="/delete/{{i.campaign.campaign_id}}" class="btn btn-danger">Delete Campaign</a>
                       {% endif %}
                       <a href="/campaign/{{i.campaign.campaign_id}}" class="btn btn-primary">Update Campaign</a>
@@ -155,7 +153,7 @@
       {% endif %}
       <a href="/campaign/add" style="display: flex;justify-content: center;">
 
-        <i class="bi bi-plus-circle-dotted fs-1"></i>
+        <i class="bi bi-plus-circle-dotted fs-1" style="color: black;"></i>
         
       </a>   
     </div>

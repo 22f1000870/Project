@@ -89,8 +89,9 @@
       </div>
 
     </div>
-
+    {% if campaign %}
     <div class="row d-flex justify-content-center">
+      <h1 class="text-center text-white"><strong>Active Campaigns</strong></h1>
         {% for c in campaign %}
         
         <div class="col-md-4">
@@ -107,11 +108,13 @@
             </div>
         </div>
         {% endfor %}
-    </div><br>
+    </div><br>{% endif %}
 
+    {% if request %}
     <div class="row ">
       <div class="container mt-5">
         <div class="row mt-3  d-flex justify-content-center">
+          <h1 class="text-center text-white"><strong>Requests</strong></h1>
             {% for i in request %}
             <div class="col md-6">
                 <div class="card mb-3">
@@ -175,7 +178,7 @@
             
           </div>
         </div>
-    </div>
+    </div>{% endif %}
   </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

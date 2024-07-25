@@ -10,13 +10,12 @@
     <title>Sponsor Dashboard</title>
     <style>
         .aa{
-            background: radial-gradient(circle,white, #7e89e2);
+            background: radial-gradient(circle,#7e89e2, #0b0577);
                
             height: 100vh;
         }
         .aj{
-            margin-top: 60px;
-            background:radial-gradient(ellipse,white,#7e89e2);
+            background-color: azure;
         }
         .jk{
             background:radial-gradient(ellipse,white,#7e89e2);
@@ -38,7 +37,7 @@
         }
     </style>
 </head>
-<body>
+<body class="aa">
     
   <div class="container-fluid h-100 ">
 
@@ -46,9 +45,9 @@
 
       <div class="col-12">
 
-        <nav class="navbar navbar-expand-lg jk">
+        <nav class="navbar navbar-expand-lg aj">
 
-          <div class="container-fluid jk ">
+          <div class="container-fluid aj ">
 
             <a class="navbar-brand" href="/update/sponsor">
 
@@ -72,12 +71,9 @@
                   <a class="nav-link"  href="/campaign">Campaign</a>
                 </li>
 
+                
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Statistics</a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link " href="#">Logout</a>
+                  <a class="nav-link " href="/logout">Logout</a>
                 </li>
 
               </ul>
@@ -92,8 +88,9 @@
       </div>
 
     </div>
-
+    {% if campaign %}
     <div class="row d-flex justify-content-center">
+      <h1 class="text-center text-white"><strong>Active Campaigns</strong></h1>
         {% for c in campaign %}
         
         <div class="col-md-4">
@@ -110,13 +107,14 @@
             </div>
         </div>
         {% endfor %}
-    </div><br>
-
+    </div><br>{% endif %}
+    {% if request %}
     <div class="row ">
 
       <div class="container mt-5">
         
         <div class="row mt-3  d-flex justify-content-center">
+          <h1 class="text-center text-white"><strong>Requests</strong></h1>
             {% for i in request %}
             
               <div class="col md-6">
@@ -184,7 +182,7 @@
             {% endfor %}
           </div>
         </div>
-    </div>
+    </div>{% endif %}
   </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
