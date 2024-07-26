@@ -95,15 +95,48 @@
         
         <div class="col-md-4">
             <div class="card campaign-card">
-              <img src="{{url_for('static',filename=c.image)}}" class="card-img-top campaign-image" alt="Campaign Image 1">
+              <img src="{{url_for('static',filename=c.campaign.image)}}" class="card-img-top campaign-image" alt="Campaign Image 1">
               <div class="card-body">
-                <h5 class="card-title">{{c.title}}</h5>
+                <h5 class="card-title">{{c.campaign.title}}</h5>
                 <div class="progress">
                   <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0"
                     aria-valuemax="100">75%</div>
                 </div>
-                <a href="/end/{{c.campaign_id}}" class="btn btn-danger mt-3">End Campaign</a>
+                <a href="/end/{{c.campaign.campaign_id}}" class="btn btn-danger mt-3">End Campaign</a>
+                <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#view{{c.influencer.influencer_id}}">
+                  View
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="view{{c.influencer.influencer_id}}" tabindex="-1" aria-labelledby="title{{c.influencer.influencer_id}}" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      
+                      <div class="modal-header ">
+                        
+                        <h1 class="modal-title fs-5 " id="title">{{c.influencer.fname +" "+ c.influencer.lname}}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <img src="{{url_for('static', filename=c.influencer.image)}}" width="100px" height="100px">
+                        <div class="row">
+                          <ul class="list-group">
+                            <li class="list-group-item"><span class="font-weight-bold">Reach :</span>{{c.influencer.reach}}</li>
+                            <li class="list-group-item"><span class="font-weight-bold">Niche :</span>{{c.influencer.niche}}</li>
+    
+                          </ul>
+                        </div> 
+                        <div class="modal-footer">
+                          
+                        </div>
+                      </div>
+                    </div>
+                      
+                    </div>
+                      
+                  </div>
               </div>
+
             </div>
         </div>
         {% endfor %}
