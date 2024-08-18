@@ -98,6 +98,9 @@
           <div class="card-body">
             <h5 class="card-title">{{i.campaign.title}}</h5>
             <p class="card-text">{{i.campaign.requirement}}</p>
+            {% if not i.campaign.influencer_id  %}
+            {% if i.campaign.flag==0 %}
+            <a href="/search/sponsor/{{i.campaign.campaign_id}}" class="btn btn-primary">Search Influencer</a>{% endif %} {% endif %}
             <button type="button" class="btn btn-primary  rounded ms-3" data-bs-toggle="modal" data-bs-target="#details{{i.campaign.campaign_id}}">
               Details
             </button>
@@ -125,11 +128,9 @@
                       </ul>
                     </div> 
                     <div class="modal-footer">
-                      {% if not i.campaign.influencer_id  %}
-                      {% if i.campaign.flag==0 %}
-                      <a href="/search/sponsor/{{i.campaign.campaign_id}}" class="btn btn-primary">Search Influencer</a>{% endif %}
+                      
                       <a href="/delete/{{i.campaign.campaign_id}}" class="btn btn-danger">Delete Campaign</a>
-                      {% endif %}
+                    
                       <a href="/campaign/{{i.campaign.campaign_id}}" class="btn btn-primary">Update Campaign</a>
                     </div>
                   </div>

@@ -1,8 +1,11 @@
 import os
 from flask import Flask,render_template, url_for,redirect,flash,session,request
+import matplotlib
 from sqlalchemy import and_, or_
 from model11 import*
 from datetime import datetime
+import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 
 app=Flask(__name__)
 
@@ -133,8 +136,9 @@ def dashboard():
     if current_user.type=='influencer':
         
         j=db.session.query(Influencer).filter(Influencer.influencer_id==current_user.user_id).first()
-        c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id,Campaign.influencer_id==j.influencer_id,Campaign.flag==0).all()
+        c=db.session.query(Campaign).filter(Campaign.influencer_id==current_user.user_id,Campaign.flag==0).all()
         print(c)
+        print(current_user.user_id)#
         r=db.session.query(Request).filter(Request.influencer_id==current_user.user_id).all()
         print(r)
         pending=[]
@@ -148,15 +152,21 @@ def dashboard():
     elif current_user.type=='sponsor':
 
         t=db.session.query(Campaign).filter(Campaign.sponsor_id==current_user.user_id,Campaign.influencer_id.isnot(None),Campaign.flag==0).all()
+        
         r=db.session.query(Irequest).filter(Irequest.sponsor_id==current_user.user_id).all()
         
         pending=[]
-        
+        active=[]
+        for j in t:
+            inf=db.session.query(Influencer).filter(Influencer.influencer_id==j.influencer_id).first()
+            
+            campaign={'campaign':j,'influencer':inf}
+            active.append(campaign)
         for i in r:
             c=i.campaign
             z={'request_id':i.request_id,'campaign':c,'time':c.time,'amount':c.amount,'influencer':i.influencer}
             pending.append(z)
-        return render_template('sdashboard.html',user=current_user.sponsor,campaign=t,request=pending)
+        return render_template('sdashboard.html',user=current_user.sponsor,campaign=active,request=pending,active=active)
     else:
         ac=db.session.query(Time).filter(Time.status==1).all()
         c=db.session.query(Time).filter(Time.status==0).all()
@@ -364,7 +374,7 @@ def requeststatus(status,request_id):
     elif current_user.type=='sponsor':
         if request.method=='POST' and status=='accept':
             cd=db.session.query(Irequest).filter(Irequest.request_id==request_id).first()
-            cd.campaign.influencer_id=current_user.user_id
+            cd.campaign.influencer_id=cd.influencer_id
             c=db.session.query(Campaign).filter(Campaign.campaign_id==cd.campaign_id).first()
             c.time.status=1
             d = db.session.query(Irequest).filter_by(campaign_id=cd.campaign_id).all()
@@ -451,10 +461,14 @@ def endcampaign(id):
 @app.route("/delete/<int:id>",methods=['GET','POST'])
 @login_required
 def deletecampaign(id):
+
     c=db.session.query(Campaign).filter(Campaign.campaign_id==id).first()
     db.session.delete(c)
     db.session.commit()
-    return redirect('/campaign')
+    if current_user.type=='sponsor':
+        return redirect('/campaign')
+    else:
+        return redirect('/dashboard')
 
 
 @app.route('/update/sponsor',methods=['GET','POST'])
@@ -467,11 +481,13 @@ def updatesponsor():
         s=db.session.query(Sponsor).filter(Sponsor.sponsor_id==current_user.user_id).first()
         a=request.form
         i=request.files['image']
+        print(i)
         img=s.image
         s.company_name=a['cname'];s.budget=float(a['budget']);s.industry=a['industry']
         if i and checkext(i.filename):
             file=os.path.join(app.config['UPLOAD_FOLDER'],i.filename)
             i.save(file)
+            print(file)
             s.image=i.filename
             filepath=os.path.join(app.config['UPLOAD_FOLDER'],img)
             os.remove(filepath)
@@ -546,6 +562,66 @@ def delete(user):
     db.session.delete(u)
     db.session.commit()
     return redirect('/dashboard')
+
+@app.route('/statistics',methods=['GET'])
+def statistics():
+    c=db.session.query(Campaign).filter(Campaign.flag==0).count()
+    fc=db.session.query(Campaign).filter(Campaign.flag==1).count()
+    i=db.session.query(Roles).filter(Roles.type=='influencer').count()
+    s=db.session.query(Roles).filter(Roles.type=='sponsor').count()
+    a=db.session.query(Time).filter(Time.status==1).count()
+    na=db.session.query(Time).filter(Time.status==0).count()
+    
+
+    if c or fc:
+        flags=['Flag','No Flag']
+        values=[c,fc]
+        plt.bar(flags, values, color=['blue', 'red'])
+
+        
+        plt.xlabel('Campaigns', fontweight='bold')
+        plt.ylabel('Values', fontweight='bold')
+        plt.title('Comparison of Flag and UnFlag Campaigns')
+        plt.savefig('./static/flaggraph.png')
+        plt.close()
+        m=True
+    else:
+        m=False
+    if s or i:
+        labels = ['Sponsor', 'Influencers']
+        sizes = [s,i]
+        colors = ['gold', 'yellowgreen']
+        explode=(0,0)
+        
+        plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+            autopct='%1.1f%%', shadow=True, startangle=140)
+        plt.axis('equal')
+        plt.title('User Distribution')
+        plt.savefig('./static/pie.png')
+
+        plt.close()
+        hh=True
+    else:
+        hh=False
+
+    if a or na:
+        labels = ['Active Campaign', 'Non-Active Campaign']
+        sizes = [a,na]
+        colors = ['yellow', 'blue']
+        explode=(0,0)
+        
+        plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+            autopct='%1.1f%%', shadow=True, startangle=140)
+        plt.axis('equal')
+        plt.title('Campaign Distribution')
+        plt.savefig('./static/cpie.png')
+
+        plt.close()
+        kk=True
+    else:
+        kk=False
+        
+    return render_template('statistics.html',f=m,p=hh,cp=kk)
 
 @app.route('/logout',methods=['GET'])
 @login_required
